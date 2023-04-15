@@ -1,0 +1,507 @@
+#!/usr/bin/env bash
+
+# ================================= #
+# SCRIPT D'INSTALLATION ARTIX LINUX #
+# ================================= #
+
+# ------------------------------------------------
+# INSTALLATION
+# ------------------------------------------------
+# Dans le cadre de SILENCIO-4570S, au lancement de l'installateur,
+# presser 'e' pour éditer 'Arch Linux install medium (x86_64, UEFI)'.
+# À la fin de la ligne commencant par 'linux' et juste avant celle
+# commencant par 'initrd', ajouter 'nomodeset' à la fin.
+# Presser Ctrl-x pour lancer l'ISO.
+# ------------------------------------------------
+# LANCEMENT DU SCRIPT
+# ------------------------------------------------
+# loadkeys fr
+# pacman-key --init
+# pacman -Sy git
+# git clone https://github.com/foxfanfare/archinstall
+# ./archinstall/install.sh
+# ------------------------------------------------
+
+# Variables
+# ------------------------------------------------
+# Numéro de version
+FILENAME=$(realpath "$0")
+VERSION=$(date -r "$FILENAME" "+%Y-%m-%d")
+USER="remy"
+
+# Variables de présentation
+BOLD=$(tput bold)
+NORMAL=$(tput sgr0)
+RED=$(tput setaf 1)
+GREEN=$(tput setaf 2)
+YELLOW=$(tput setaf 3)
+BLUE=$(tput setaf 4)
+MAGENTA=$(tput setaf 5)
+CYAN=$(tput setaf 6)
+SPACE1=" :: "
+SPACE2="   ${CYAN}->${NORMAL}  "
+SPACE3="       "
+OK=" [${GREEN}OK${NORMAL}] "
+WARNING="  ${RED}/!\\${NORMAL} "
+title() {
+  echo
+  echo " $BOLD[$NUMBER/7] $1$NORMAL"
+}
+ok() {
+  echo
+  deline
+  echo " $OK$SUBTITLE"
+}
+# Supprime une ligne dans le prompt
+deline() {
+  tput cuu1 ; tput el
+}
+
+# Paquets de base
+BASE=(
+  base
+  base-devel
+  linux
+#    linux-firmware
+)
+
+# Paquets graphiques
+GRAPHIC_INTEL=(
+  mesa
+)
+
+GRAPHIC_AMD=(
+)
+
+# Paquets communs
+COMMON=(
+  alacritty
+  git
+  grub
+  #libedit
+  #llvm-libs
+  networkmanager
+  kitty
+  zsh-autosuggestions
+  zsh-theme-powerlevel10k
+  rsync
+  rust
+  vim
+  zsh zsh-completions
+)
+
+# Paquets environnement de bureau
+WINDOW_MANAGER=(
+  cairo
+  cmake
+  gcc
+  gdb
+  hyprland
+  libdisplay-info
+  libinput
+  libliftoff
+  libx11
+  libxcb
+  libxcomposite
+  libxfixes
+  libxkbcommon
+  libxrender
+  meson
+  ninja
+  pango
+  pixman
+  seatd
+  wayland-protocols
+  xcb-proto
+  xcb-util
+  xcb-util-keysyms
+  xcb-util-wm
+  xorg-xinput
+  xorg-xwayland
+)
+
+# Paquets AUR
+AUR=(
+)
+
+# Page de titre principale
+# ------------------------------------------------
+print_title() {
+  clear
+  echo "${BOLD}  --------------------------------------  "
+  echo " | SCRIPT D'INSTALLATION DE ARTIX LINUX |"
+  echo " | v.${VERSION}                         |"
+  echo "  -------------------------------------- ${NORMAL}"
+  echo
+}
+
+# Confirmation de l'installation
+# ------------------------------------------------
+confirm() {
+  # Nom du CPU
+  CPU=$(cat /proc/cpuinfo | grep name | awk 'NR==1{print}' | grep -o '[^ ]* CPU' | sed  's/ CPU//')
+
+  # Nom de l'ordinateur
+  case "$CPU" in
+    i5-2410M) PROFILE="HP-DV7";;
+    i5-1340P) PROFILE="FRAMEWORK";;
+    i5-4570S) PROFILE="SILENCIO";;
+    *) PROFILE="";;
+  esac
+
+  # Confirmation du profil d'installation
+  if [[ -n "$PROFILE" ]]; then
+    echo " Profil d'installation détecté : ${BOLD}${PROFILE}${NORMAL}"
+  else
+    echo " Profil d'installation non détecté !${NORMAL}"
+    read -p " Presser une touche pour quitter…"
+    exit 0
+  fi
+
+  while true; do
+    read -p " Procéder à l'installation ? [O/n] " CONFIRM;
+    if [[ -z "$CONFIRM" || "$CONFIRM" = [Oo] ]]; then
+      break
+    else
+      exit 0
+    fi
+  done
+}
+
+# Informations d'installation complémentaires
+# ------------------------------------------------
+collect_datas() {
+  TITLE="Informations d'installation"
+  NUMBER="1"
+  title "$TITLE"
+  
+  # Réinitialise les paramètres
+  loadkeys fr-latin1 &>/dev/null
+
+  # Mot de passe
+  SUBTITLE="Définition des mots de passe"
+  echo "$SPACE2$SUBTITLE..."
+  while true; do
+    read -sp "${SPACE3}Mot de passe : " PASSWORD;
+    echo
+    read -sp "${SPACE3}Répétez le mot de passe : " PASSWORD_CONTROL;
+    echo
+    if [[ $PASSWORD == $PASSWORD_CONTROL ]]; then
+      for run in {1..3}; do
+        deline
+      done
+      echo " $OK$SUBTITLE"
+      break
+    else
+      read -p "${WARNING}Les mots de passe ne sont pas identiques. Veuillez recommencer..."
+      for run in {1..3}; do
+        deline
+      done
+    fi
+  done
+}
+
+# Détection d'un système déjà présent
+# ------------------------------------------------
+detect_system() {
+  TITLE="Gestion des disques"
+  NUMBER="2"
+  title "$TITLE"
+
+  # Vérifier si un système est déjà présent
+  HOME_DRIVE=$(lsblk -l | grep home | awk '{print $1}')
+  ROOT_DRIVE=$(lsblk -l | grep "/$" | awk '{print $1}')
+
+  # Choisir si le disque doit être partitionné
+  SUBTITLE="Analyse des disques"
+  echo -n "$SPACE2$SUBTITLE..."
+  if [[ -n "$ROOT_DRIVE" ]]; then
+    echo
+    while true; do
+      read -p "${WARNING}Un système est déjà présent sur le disque. Souhaitez vous le conserver ? [O/n] " CONFIRM;
+      if [[ -z "$CONFIRM" || "$CONFIRM" = [Oo] ]]; then
+        for run in {1..2}; do
+          deline
+        done
+        echo "$OK$SUBTITLE"
+        break
+        else if [[ "$CONFIRM" = [Nn] ]]; then
+          while true; do
+            read -p "${WARNING}Des données importantes risquent d'être effacées. Êtes-vous sûr ? [O/n] " CONFIRM;
+            if [[ -z "$CONFIRM" || "$CONFIRM" = [Oo] ]]; then
+              for run in {1..3}; do
+                deline
+              done
+              echo "$OK$SUBTITLE"
+              partition
+              break
+              else if [[ "$CONFIRM" = [Nn] ]]; then
+                for run in {1..3}; do
+                  deline
+                done
+                echo "$OK$SUBTITLE"
+                break
+              fi
+            fi
+          done
+          break
+        fi
+      fi
+    done
+  else
+    ok
+    partition
+  fi
+}
+
+# Partitionnement des disques
+# ------------------------------------------------
+partition(){
+  # Gestion des disques selon le profil d'installation
+  case "$CPU" in
+    i5-2410M)
+      # Partitionnement des disques
+      SUBTITLE="Partitionnement des disques"
+      echo -n "$SPACE2$SUBTITLE..."
+      DRIVE="/dev/sda"
+      (
+        echo "o"       # créer une nouvelle table vide de partitions DOS
+        echo "n"       # ajouter une nouvelle partition
+        echo "p"       # primaire
+        echo "1"       # partition 1
+        echo           # premier secteur (défaut)
+        echo "+6G"     # +6Go
+        echo "y"       # supprime la signature si demandée
+        echo "n"       # ajouter une nouvelle partition
+        echo "p"       # primaire
+        echo "2"       # partition 2
+        echo           # premier secteur (défaut)
+        echo           # dernier secteur (défaut)
+        echo "y"       # supprime la signature si demandée
+        echo "w"       # écrire la table sur le disque et quitter
+      ) | fdisk "$DRIVE" &>/dev/null
+      ROOT_DRIVE="${DRIVE}1"
+      HOME_DRIVE="${DRIVE}2"
+      ok
+
+      # Formattage des partitions
+      SUBTITLE="Formattage des partitions"
+      echo -n "$SPACE2$SUBTITLE..."
+      mkfs.ext4 "$ROOT_DRIVE" &>/dev/null
+      mkfs.ext4 "$HOME_DRIVE" &>/dev/null
+      ok
+      ;;
+    i5-1340P)
+      ;;
+    i5-4570S)
+      ;;
+  esac
+}
+
+# Montage des partitions
+# ------------------------------------------------
+mount_drives() {
+  # Montage des partitions
+  SUBTITLE="Montage des partitions"
+  echo -n "$SPACE2$SUBTITLE..."
+  mount "$ROOT_DRIVE" /mnt &>/dev/null
+  mkdir -p "/mnt/home" &>/dev/null
+  mount "$HOME_DRIVE" /mnt/home &>/dev/null
+  ok
+}
+
+# Installation des fichiers de base
+# ------------------------------------------------
+base_install() {
+  TITLE="Installation de base"
+  NUMBER="3"
+  title "$TITLE"
+  
+  # Analyse des miroirs
+  SUBTITLE="Analyse des miroirs"
+  echo -n "$SPACE2$SUBTITLE..."
+  #reflector --country France --age 12 --protocol https --sort rate --save /etc/pacman.d/mirrorlist &>/dev/null
+  ok
+
+  # Installation des paquets de base
+  SUBTITLE="Installation des paquets de base"
+  echo -n "$SPACE2$SUBTITLE..."
+  pacstrap -K /mnt "${BASE[@]}" &>/dev/null
+  ok
+}
+
+# Configuration du système
+# ------------------------------------------------
+system_configuration() {
+  TITLE="Configuration du système"
+  NUMBER="4"
+  title "$TITLE"
+
+  # Fichier fstab
+  SUBTITLE="Configuration du fichier fstab"
+  echo -n "$SPACE2$SUBTITLE..."
+  genfstab -U /mnt > /mnt/etc/fstab
+  ok
+
+  # Fuseau horaire
+  SUBTITLE="Configuration du fuseau horaire"
+  echo -n "$SPACE2$SUBTITLE..."
+  arch-chroot /mnt ln -sf /usr/share/zoneinfo/Europe/Paris /etc/localtime
+  arch-chroot /mnt hwclock --systohc
+  ok
+
+  # Locales
+  SUBTITLE="Configuration des locales"
+  echo -n "$SPACE2$SUBTITLE..."
+  sed -i 's/#fr_FR.UTF/fr_FR.UTF/' /mnt/etc/locale.gen
+  arch-chroot /mnt locale-gen &>/dev/null
+  echo -e "LANG=fr_FR.UTF8" > /mnt/etc/locale.conf
+  echo -e "KEYMAP=fr-latin1" > /mnt/etc/vconsole.conf
+  arch-chroot /mnt mkdir -p "/etc/X11/xorg.conf.d/" &>/dev/null
+  cat <<EOT > "/mnt/etc/X11/xorg.conf.d/00-keyboard.conf"
+Section "InputClass"
+  Identifier      "Keyboard Layout"
+  MatchIsKeyboard "yes"
+  Option          "XkbLayout"   "fr"
+  Option          "XkbVariant"  "latin9"
+EndSection
+EOT
+  ok
+
+  # Configuration des comptes d'utilisateur
+  SUBTITLE="Configuration des comptes d'utilisateur"
+  echo -n "$SPACE2$SUBTITLE..."
+  arch-chroot /mnt useradd -m -g users -G wheel $USER &>/dev/null
+  printf "%s\n%s" $PASSWORD $PASSWORD | arch-chroot /mnt passwd $USER &>/dev/null
+  sed -i 's/# %wheel ALL=(ALL:ALL) ALL/%wheel ALL=(ALL:ALL) ALL/' /mnt/etc/sudoers
+  ok
+}
+
+# Installation des autres paquets
+# ------------------------------------------------
+commom_install() {
+  TITLE="Installation des programmes complémentaires"
+  NUMBER="5"
+  title "$TITLE"
+
+  # Configuration et mise à jour de pacman
+  SUBTITLE="Configuration et mise à jour de pacman"
+  echo -n "$SPACE2$SUBTITLE..."
+  sed -i 's/#Color/Color/' /mnt/etc/pacman.conf
+  sed -i 's/#VerbosePkgLists/VerbosePkgLists/' /mnt/etc/pacman.conf
+  sed -i 's/#ParallelDownloads/ParallelDownloads/' /mnt/etc/pacman.conf
+  sed -zi 's/#\[multilib\]\n#/[multilib]\n/' /mnt/etc/pacman.conf
+  arch-chroot /mnt pacman -Syu --noconfirm &>/dev/null
+  ok
+
+  # Installation des paquets communs
+  SUBTITLE="Installation des drivers graphiques"
+  echo -n "$SPACE2$SUBTITLE..."
+  case "$CPU" in
+    i5-2410M)
+      GRAPHIC="$GRAPHIC_INTEL"
+      ;;
+    i5-1340P)
+      GRAPHIC="$GRAPHIC_INTEL"
+      ;;
+    i5-4570S)
+      GRAPHIC="$GRAPHIC_NVIDIA"
+      ;;
+  esac
+  arch-chroot /mnt pacman -S --noconfirm --needed "${GRAPHIC[@]}" &>/dev/null
+  ok
+
+  # Installation de l'environnement de bureau
+  SUBTITLE="Installation de l'environnement de bureau"
+  echo -n "$SPACE2$SUBTITLE..."
+  arch-chroot /mnt pacman -S --noconfirm --needed "${WINDOW_MANAGER[@]}" &>/dev/null
+  ok
+
+  # Installation des paquets communs
+  SUBTITLE="Installation des paquets communs"
+  echo -n "$SPACE2$SUBTITLE..."
+  arch-chroot /mnt pacman -S --noconfirm --needed "${COMMON[@]}" &>/dev/null
+  ok
+
+  # Installation d'un assistant AUR
+#  SUBTITLE="Installation d'un assistant AUR"
+#  echo -n "$SPACE2$SUBTITLE..."
+#  arch-chroot /mnt &>/dev/null <<EOF
+#su $USER
+#cd /home/$USER
+#git clone https://aur.archlinux.org/paru.git
+#cd paru
+#makepkg --noconfirm -si
+#cd ..
+#rm -rd paru
+#EOF
+#  ok
+}
+
+# Configuration des programmes
+# ------------------------------------------------
+software_configuration() {
+  TITLE="Configuration des applications"
+  NUMBER="6"
+  title "$TITLE"
+
+  # Configuration du shell
+  SUBTITLE="Configuration du shell"
+  echo -n "$SPACE2$SUBTITLE..."
+  arch-chroot /mnt chsh -s /usr/bin/zsh &>/dev/null
+  printf "%s" $PASSWORD | arch-chroot -u $USER /mnt chsh -s /usr/bin/zsh &>/dev/null
+  echo "ZDOTDIR=/home/$USER/.config/zsh" > /mnt/etc/zsh/zshenv
+  ok
+
+  # Configuration des dotfiles
+  SUBTITLE="Configuration des dotfiles"
+  echo -n "$SPACE2$SUBTITLE..."
+  arch-chroot -u $USER /mnt mkdir -p /home/$USER/.dotfiles &>/dev/null
+  arch-chroot -u $USER /mnt git clone --bare https://github.com/foxfanfare/dotfiles.git /home/$USER/.dotfiles &>/dev/null
+  arch-chroot -u $USER /mnt git --git-dir=/home/$USER/.dotfiles config --local status.showUntrackedFiles no
+  arch-chroot /mnt git --git-dir=/home/$USER/.dotfiles --work-tree=/home/$USER checkout
+  ok
+}
+
+# Installation du bootloader
+# ------------------------------------------------
+bootloader() {
+  TITLE="Préparation de l'ordinateur"
+  NUMBER="7"
+  title "$TITLE"
+
+  # Installation du bootloader
+  SUBTITLE="Configuration du bootloader"
+  echo -n "$SPACE2$SUBTITLE..."
+  case "$CPU" in
+    i5-2410M)
+      arch-chroot /mnt grub-install --target=i386-pc --no-floppy --recheck "$DRIVE" &>/dev/null
+      ;;
+    i5-1340P)
+      ;;
+    i5-4570S)
+      ;;
+  esac
+  arch-chroot /mnt grub-mkconfig -o /boot/grub/grub.cfg &>/dev/null
+  ok
+  
+  # Configuration du réseau
+  SUBTITLE="Configuration du réseau"
+  echo -n "$SPACE2$SUBTITLE..."
+  echo "$PROFILE" > /mnt/etc/hostname
+  arch-chroot /mnt systemctl enable NetworkManager.service &>/dev/null
+  ok
+}
+
+# Exécution du script
+# ------------------------------------------------
+print_title;
+confirm;
+collect_datas;
+detect_system;
+mount_drives;
+base_install;
+system_configuration;
+commom_install;
+software_configuration;
+bootloader;
