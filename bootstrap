@@ -71,7 +71,6 @@ KERNEL=(
   linux-firmware
 )
 
-
 # Paquets graphiques
 GRAPHIC_INTEL=(
   mesa
@@ -83,18 +82,22 @@ GRAPHIC_AMD=(
 # Paquets communs
 COMMON=(
   alacritty
+  cryptsetup
   git
   grub
+  lvm2
+  lvm2-runit
   #libedit
   #llvm-libs
   networkmanager
-  kitty
-  zsh-autosuggestions
-  zsh-theme-powerlevel10k
-  rsync
+  networkmanager-runit
   rust
+  rsync
   vim
-  zsh zsh-completions
+  zsh
+  zsh-autosuggestions
+  zsh-completions
+  zsh-theme-powerlevel10k
 )
 
 # Paquets environnement de bureau
@@ -538,7 +541,7 @@ collect_datas;
 detect_system;
 mount_drives;
 base_install;
-#system_configuration;
+system_configuration;
 #commom_install;
 #software_configuration;
 #bootloader;
