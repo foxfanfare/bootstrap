@@ -133,10 +133,10 @@ AUR=(
 # ------------------------------------------------
 print_title() {
   clear
-  echo "${BOLD}  -------------------------------------  "
+  echo "${BOLD}| -------------------------------------  "
   echo " | SCRIPT D'INSTALLATION DE ARCH LINUX |"
   echo " | v.${VERSION}                        |"
-  echo "  ------------------------------------- ${NORMAL}"
+  echo "  ------------------------------------ |${NORMAL}"
   echo
 }
 
@@ -489,7 +489,6 @@ software_configuration() {
   # Configuration du shell
   SUBTITLE="Configuration du shell"
   echo -n "$SPACE2$SUBTITLE..."
-  arch-chroot /mnt chsh -s /usr/bin/zsh &>/dev/null
   printf "%s" $PASSWORD | arch-chroot -u $USER /mnt chsh -s /usr/bin/zsh &>/dev/null
   echo "ZDOTDIR=/home/$USER/.config/zsh" > /mnt/etc/zsh/zshenv
   ok
@@ -531,7 +530,6 @@ bootloader() {
   SUBTITLE="Configuration du réseau"
   echo -n "$SPACE2$SUBTITLE..."
   echo "$PROFILE" > /mnt/etc/hostname
-
   cat <<EOT > "/mnt/etc/hosts"
 127.0.0.1   localhost
 ::1         localhost
@@ -542,8 +540,9 @@ EOT
 
   # Configuration des comptes d'utilisateur
   SUBTITLE="Configuration des comptes d'utilisateur"
-  sed -i 's/# %wheel ALL=(ALL:ALL) ALL/%wheel ALL=(ALL:ALL) ALL/' /mnt/etc/sudoers
-  sed -i 's/%wheel ALL=(ALL:ALL) NOPASSWD: ALL/# %wheel ALL=(ALL:ALL) NOPASSWD: ALL/' /mnt/etc/sudoers
+  sed -i "s/# %wheel ALL=(ALL:ALL) ALL/%wheel ALL=(ALL:ALL) ALL/" /mnt/etc/sudoers
+  sed -i "s/%wheel ALL=(ALL:ALL) NOPASSWD: ALL/# %wheel ALL=(ALL:ALL) NOPASSWD: ALL/" /mnt/etc/sudoers
+  sed -i "s/--noclear/--noclear --autologin ${USER}/" /mnt/etc/sudoers
   ok
 }
 
