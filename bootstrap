@@ -467,11 +467,11 @@ common_install() {
   SUBTITLE="Installation d'un assistant AUR"
   echo -n "$SPACE2$SUBTITLE..."
   arch-chroot /mnt <<EOF
-su $USER
 cd /home/$USER
+su $USER
 git clone https://aur.archlinux.org/paru.git
-cd paru
-printf "%s" "$PASSWORD" | makepkg --noconfirm -si
+exit
+makepkg --noconfirm -si
 cd ..
 rm -rd paru
 EOF
