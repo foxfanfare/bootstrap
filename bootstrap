@@ -515,7 +515,7 @@ bootloader() {
   SUBTITLE="Configuration de mkinitcpio"
   echo -n "$SPACE2$SUBTITLE..."
   sed -i "block filesystems fsck)/block encrypt lvm2 filesystems fsck)/" /mnt/etc/systemd/system/getty.target.wants/getty@tty1.service
-  arch-chroot /mnt mkinitcpio -P
+  #arch-chroot /mnt mkinitcpio -P
   ok
 
 #  # Installation du bootloader
@@ -560,8 +560,8 @@ confirm;
 collect_datas;
 detect_system;
 mount_drives;
-base_install;
-system_configuration;
-common_install;
-software_configuration;
+#base_install;
+#system_configuration;
+#common_install;
+#software_configuration;
 bootloader;
