@@ -379,7 +379,7 @@ system_configuration() {
   # Fichier fstab
   SUBTITLE="Configuration du fichier fstab"
   echo -n "$SPACE2$SUBTITLE..."
-  fstabgen -U /mnt >> /mnt/etc/fstab
+  genfstab -U /mnt >> /mnt/etc/fstab
   ok
 
   # Fuseau horaire
@@ -389,7 +389,7 @@ system_configuration() {
   arch-chroot /mnt hwclock --systohc
   ok
 
-  ## Locales
+  # Locales
   SUBTITLE="Configuration des locales"
   echo -n "$SPACE2$SUBTITLE..."
   sed -i 's/#fr_FR/fr_FR/' /mnt/etc/locale.gen
