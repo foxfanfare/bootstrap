@@ -39,7 +39,7 @@ BLUE=$(tput setaf 4)
 MAGENTA=$(tput setaf 5)
 CYAN=$(tput setaf 6)
 SPACE1=" :: "
-SPACE2="   ${CYAN}->${NORMAL}  "
+SPACE2="  ${BOLD}${GREEN}==>${NORMAL}  "
 SPACE3="       "
 OK=" [${GREEN}OK${NORMAL}] "
 WARNING="  ${RED}/!\\${NORMAL} "
@@ -515,7 +515,7 @@ bootloader() {
   SUBTITLE="Configuration de mkinitcpio"
   echo -n "$SPACE2$SUBTITLE..."
   sed -i "s/block filesystems fsck)/block encrypt lvm2 filesystems fsck)/" /mnt/etc/systemd/system/getty.target.wants/getty@tty1.service
-  arch-chroot /mnt mkinitcpio -P
+  arch-chroot /mnt mkinitcpio -P &>/dev/null
   ok
 
 #  # Installation du bootloader
