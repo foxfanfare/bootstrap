@@ -419,7 +419,7 @@ commom_install() {
   # Analyse des miroirs
   SUBTITLE="Analyse des miroirs"
   echo -n "$SPACE2$SUBTITLE..."
-  curl "https://gitea.artixlinux.org/packagesA/artix-mirrorlist/raw/branch/master/trunk/mirrorlist" > /mnt/etc/pacman.d/mirrorlist-artix &>/dev/null
+  curl -s "https://gitea.artixlinux.org/packagesA/artix-mirrorlist/raw/branch/master/trunk/mirrorlist" > /mnt/etc/pacman.d/mirrorlist-artix
   rankmirrors -n 10 /mnt/etc/pacman.d/mirrorlist-artix > /mnt/etc/pacman.d/mirrorlist
   ok
 
