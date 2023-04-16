@@ -61,9 +61,6 @@ deline() {
 BASE=(
   base
   base-devel
-  runit
-  elogind-runit
-  pacman-contrib
 )
 
 KERNEL=(
@@ -457,15 +454,15 @@ common_install() {
   ok
 
   # Installation de l'environnement de bureau
-  #SUBTITLE="Installation de l'environnement de bureau"
-  #echo -n "$SPACE2$SUBTITLE..."
-  #arch-chroot /mnt pacman -S --noconfirm --needed "${WINDOW_MANAGER[@]}" #&>/dev/null
-  #ok
+  SUBTITLE="Installation de l'environnement de bureau"
+  echo -n "$SPACE2$SUBTITLE..."
+  arch-chroot /mnt pacman -S --noconfirm --needed "${WINDOW_MANAGER[@]}" &>/dev/null
+  ok
 
   # Installation des paquets communs
   SUBTITLE="Installation des paquets communs"
   echo -n "$SPACE2$SUBTITLE..."
-  arch-chroot /mnt pacman -S --noconfirm --needed "${COMMON[@]}" #&>/dev/null
+  arch-chroot /mnt pacman -S --noconfirm --needed "${COMMON[@]}" &>/dev/null
   ok
 
   # Installation d'un assistant AUR
