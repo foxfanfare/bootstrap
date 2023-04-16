@@ -87,7 +87,6 @@ COMMON=(
   #libedit
   #llvm-libs
   networkmanager
-  networkmanager-runit
   rust
   rsync
   vim
@@ -450,25 +449,25 @@ common_install() {
       GRAPHIC="$GRAPHIC_NVIDIA"
       ;;
   esac
-  arch-chroot /mnt pacman -S --noconfirm --needed "${GRAPHIC[@]}" &>/dev/null
+  arch-chroot /mnt pacman -S --noconfirm --needed "${GRAPHIC[@]}" #&>/dev/null
   ok
 
   # Installation de l'environnement de bureau
   SUBTITLE="Installation de l'environnement de bureau"
   echo -n "$SPACE2$SUBTITLE..."
-  arch-chroot /mnt pacman -S --noconfirm --needed "${WINDOW_MANAGER[@]}" &>/dev/null
+  arch-chroot /mnt pacman -S --noconfirm --needed "${WINDOW_MANAGER[@]}" #&>/dev/null
   ok
 
   # Installation des paquets communs
   SUBTITLE="Installation des paquets communs"
   echo -n "$SPACE2$SUBTITLE..."
-  arch-chroot /mnt pacman -S --noconfirm --needed "${COMMON[@]}" &>/dev/null
+  arch-chroot /mnt pacman -S --noconfirm --needed "${COMMON[@]}" #&>/dev/null
   ok
 
   # Installation d'un assistant AUR
   SUBTITLE="Installation d'un assistant AUR"
   echo -n "$SPACE2$SUBTITLE..."
-  arch-chroot /mnt &>/dev/null <<EOF
+  arch-chroot /mnt <<EOF
 su $USER
 cd /home/$USER
 git clone https://aur.archlinux.org/paru.git
