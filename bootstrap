@@ -18,8 +18,8 @@
 # loadkeys fr
 # pacman-key --init
 # pacman -Sy git
-# git clone https://github.com/foxfanfare/archinstall
-# ./archinstall/install.sh
+# git clone https://github.com/foxfanfare/bootstrap
+# ./bootstrap/bootstrap
 # ------------------------------------------------
 
 # Variables
@@ -263,13 +263,13 @@ partition(){
       DRIVE="/dev/sda"
       (
         echo "o"       # créer une nouvelle table vide de partitions DOS
-        echo "n"       # ajouter une nouvelle partition (boot)
+        echo "n"       # ajouter une nouvelle partition
         echo "p"       # primaire
         echo "1"       # partition 1
         echo           # premier secteur (défaut)
         echo "+1G"     # +1Go
         echo "y"       # supprime la signature si demandée
-        echo "n"       # ajouter une nouvelle partition (encrypted root)
+        echo "n"       # ajouter une nouvelle partition
         echo "p"       # primaire
         echo "2"       # partition 2
         echo           # premier secteur (défaut)
@@ -516,9 +516,9 @@ print_title;
 confirm;
 collect_datas;
 detect_system;
-mount_drives;
-base_install;
-system_configuration;
-commom_install;
-software_configuration;
+#mount_drives;
+#base_install;
+#system_configuration;
+#commom_install;
+#software_configuration;
 #bootloader;
