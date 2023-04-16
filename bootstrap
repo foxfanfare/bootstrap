@@ -465,17 +465,17 @@ common_install() {
   ok
 
   # Installation d'un assistant AUR
-  SUBTITLE="Installation d'un assistant AUR"
-  echo -n "$SPACE2$SUBTITLE..."
-  arch-chroot /mnt <<EOF
-su $USER
-cd /home/$USER
-git clone https://aur.archlinux.org/paru.git
-cd paru
-makepkg --noconfirm -si
-cd ..
-rm -rd paru
-EOF
+#  SUBTITLE="Installation d'un assistant AUR"
+#  echo -n "$SPACE2$SUBTITLE..."
+#  arch-chroot /mnt &>/dev/null <<EOF
+#su $USER
+#cd /home/$USER
+#git clone https://aur.archlinux.org/paru.git
+#cd paru
+#makepkg --noconfirm -si
+#cd ..
+#rm -rd paru
+#EOF
   ok
 }
 
@@ -497,6 +497,7 @@ software_configuration() {
   # Configuration des dotfiles
   SUBTITLE="Configuration des dotfiles"
   echo -n "$SPACE2$SUBTITLE..."
+  arch-chroot -u $USER /mnt mkdir -p /home/$USER/.config &>/dev/null
   arch-chroot -u $USER /mnt mkdir -p /home/$USER/.dotfiles &>/dev/null
   arch-chroot -u $USER /mnt git clone --bare https://github.com/foxfanfare/dotfiles.git /home/$USER/.dotfiles &>/dev/null
   arch-chroot -u $USER /mnt git --git-dir=/home/$USER/.dotfiles config --local status.showUntrackedFiles no
@@ -556,5 +557,5 @@ mount_drives;
 base_install;
 system_configuration;
 common_install;
-#software_configuration;
+software_configuration;
 #bootloader;
