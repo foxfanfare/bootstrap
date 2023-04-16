@@ -419,7 +419,8 @@ commom_install() {
   # Analyse des miroirs
   SUBTITLE="Analyse des miroirs"
   echo -n "$SPACE2$SUBTITLE..."
-  curl -s "https://gitea.artixlinux.org/packagesA/artix-mirrorlist/raw/branch/master/trunk/mirrorlist" > /mnt/etc/pacman.d/mirrorlist-artix
+  MIRROR_LINK="https://gitea.artixlinux.org/packagesA/artix-mirrorlist/raw/branch/master/trunk/mirrorlist"
+  curl -s "$MIRROR_LINK" > /mnt/etc/pacman.d/mirrorlist-artix
   rankmirrors -n 10 /mnt/etc/pacman.d/mirrorlist-artix > /mnt/etc/pacman.d/mirrorlist
   ok
 
@@ -433,28 +434,28 @@ commom_install() {
   artix-chroot /mnt pacman -Syu --noconfirm &>/dev/null
   ok
 
-  ## Installation des paquets communs
-  #SUBTITLE="Installation des drivers graphiques"
-  #echo -n "$SPACE2$SUBTITLE..."
-  #case "$CPU" in
-  #  i5-2410M)
-  #    GRAPHIC="$GRAPHIC_INTEL"
-  #    ;;
-  #  i5-1340P)
-  #    GRAPHIC="$GRAPHIC_INTEL"
-  #    ;;
-  #  i5-4570S)
-  #    GRAPHIC="$GRAPHIC_NVIDIA"
-  #    ;;
-  #esac
-  #artix-chroot /mnt pacman -S --noconfirm --needed "${GRAPHIC[@]}" &>/dev/null
-  #ok
+  # Installation des paquets communs
+  SUBTITLE="Installation des drivers graphiques"
+  echo -n "$SPACE2$SUBTITLE..."
+  case "$CPU" in
+    i5-2410M)
+      GRAPHIC="$GRAPHIC_INTEL"
+      ;;
+    i5-1340P)
+      GRAPHIC="$GRAPHIC_INTEL"
+      ;;
+    i5-4570S)
+      GRAPHIC="$GRAPHIC_NVIDIA"
+      ;;
+  esac
+  artix-chroot /mnt pacman -S --noconfirm --needed "${GRAPHIC[@]}" &>/dev/null
+  ok
 
-  ## Installation de l'environnement de bureau
-  #SUBTITLE="Installation de l'environnement de bureau"
-  #echo -n "$SPACE2$SUBTITLE..."
-  #artix-chroot /mnt pacman -S --noconfirm --needed "${WINDOW_MANAGER[@]}" &>/dev/null
-  #ok
+  # Installation de l'environnement de bureau
+  SUBTITLE="Installation de l'environnement de bureau"
+  echo -n "$SPACE2$SUBTITLE..."
+  artix-chroot /mnt pacman -S --noconfirm --needed "${WINDOW_MANAGER[@]}" &>/dev/null
+  ok
 
   ## Installation des paquets communs
   #SUBTITLE="Installation des paquets communs"
