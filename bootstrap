@@ -297,12 +297,11 @@ partition(){
       #ok
 
       # Formattage des partitions
-      #SUBTITLE="Formattage des partitions"
-      #echo -n "$SPACE2$SUBTITLE..."
-      #mkfs.fat -F32 "$BOOT_PARTITION" #&>/dev/null
-      #mkfs.btrfs /dev/mapper/vg0-root
-      #mkfs.btrfs /dev/mapper/vg0-home
-      #ok
+      SUBTITLE="Formattage des partitions"
+      echo -n "$SPACE2$SUBTITLE..."
+      mkfs.fat -F32 "$BOOT_PARTITION" &>/dev/null
+      mkfs.btrfs /dev/mapper/"$CRYPT_PARTITION"
+      ok
       ;;
     i5-1340P)
       ;;
