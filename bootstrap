@@ -385,7 +385,7 @@ system_configuration() {
   ## Locales
   SUBTITLE="Configuration des locales"
   echo -n "$SPACE2$SUBTITLE..."
-  sed -i 's/#fr_FR.UTF/fr_FR.UTF/' /mnt/etc/locale.gen
+  sed -i 's/#fr_FR/fr_FR/' /mnt/etc/locale.gen
   artix-chroot /mnt locale-gen &>/dev/null
   echo -e "LANG=fr_FR.UTF8" > /mnt/etc/locale.conf
   echo -e "KEYMAP=fr-latin1" > /mnt/etc/vconsole.conf
@@ -452,30 +452,30 @@ common_install() {
   ok
 
   # Installation de l'environnement de bureau
-  SUBTITLE="Installation de l'environnement de bureau"
-  echo -n "$SPACE2$SUBTITLE..."
-  artix-chroot /mnt pacman -S --noconfirm --needed "${WINDOW_MANAGER[@]}" #&>/dev/null
-  ok
+  #SUBTITLE="Installation de l'environnement de bureau"
+  #echo -n "$SPACE2$SUBTITLE..."
+  #artix-chroot /mnt pacman -S --noconfirm --needed "${WINDOW_MANAGER[@]}" #&>/dev/null
+  #ok
 
   # Installation des paquets communs
   SUBTITLE="Installation des paquets communs"
   echo -n "$SPACE2$SUBTITLE..."
-  artix-chroot /mnt pacman -S --noconfirm --needed "${COMMON[@]}" #&>/dev/null
+  artix-chroot /mnt pacman -S --noconfirm --needed "${COMMON[@]}" &>/dev/null
   ok
 
-  # Installation d'un assistant AUR
-  SUBTITLE="Installation d'un assistant AUR"
-  echo -n "$SPACE2$SUBTITLE..."
-  artix-chroot /mnt &>/dev/null <<EOF
-su $USER
-cd /home/$USER
-git clone https://aur.archlinux.org/paru.git
-cd paru
-makepkg --noconfirm -si
-cd ..
-rm -rd paru
-EOF
-  ok
+#  # Installation d'un assistant AUR
+#  SUBTITLE="Installation d'un assistant AUR"
+#  echo -n "$SPACE2$SUBTITLE..."
+#  artix-chroot /mnt &>/dev/null <<EOF
+#su $USER
+#cd /home/$USER
+#git clone https://aur.archlinux.org/paru.git
+#cd paru
+#makepkg --noconfirm -si
+#cd ..
+#rm -rd paru
+#EOF
+#  ok
 }
 
 # Configuration des programmes
@@ -529,6 +529,12 @@ bootloader() {
   SUBTITLE="Configuration du réseau"
   echo -n "$SPACE2$SUBTITLE..."
   echo "$PROFILE" > /mnt/etc/hostname
+
+  cat <<EOT > "/mnt/etc/hosts"
+127.0.0.1   localhost
+::1         localhost
+127.0.1.1   "$PROFILE".localdomain  "$PROFILE"
+EOT
   artix-chroot /mnt systemctl enable NetworkManager.service &>/dev/null
   ok
 }
