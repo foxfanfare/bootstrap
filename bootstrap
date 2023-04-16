@@ -178,7 +178,6 @@ collect_datas() {
   # Mot de passe
   SUBTITLE="Définition des mots de passe"
   echo "$SPACE2$SUBTITLE..."
-  timedatectl
   while true; do
     read -sp "${SPACE3}Mot de passe : " PASSWORD;
     echo
@@ -281,8 +280,8 @@ partition(){
       CRYPT_PARTITION_NAME="cryptlvm"
       ok
 
-      # Chiffrement de la partition
-      SUBTITLE="Chiffrement de la partition"
+      # Configuration du chiffrement
+      SUBTITLE="Configuration du chiffrement"
       echo -n "$SPACE2$SUBTITLE..."
       echo -n "$PASSWORD" | cryptsetup --key-size=512 --key-file=- luksFormat --type luks2 "$CRYPT_PARTITION" &>/dev/null
       echo -n "$PASSWORD" | cryptsetup --key-file=- open "$CRYPT_PARTITION" "$CRYPT_PARTITION_NAME"  &>/dev/null
@@ -298,12 +297,12 @@ partition(){
       ok
 
       # Formattage des partitions
-      #SUBTITLE="Formattage des partitions"
-      #echo -n "$SPACE2$SUBTITLE..."
-      #mkfs.fat -F32 "$BOOT_PARTITION" #&>/dev/null
-      #mkfs.btrfs /dev/mapper/vg0-root
-      #mkfs.btrfs /dev/mapper/vg0-home
-      #ok
+      SUBTITLE="Formattage des partitions"
+      echo -n "$SPACE2$SUBTITLE..."
+      mkfs.fat -F32 "$BOOT_PARTITION" #&>/dev/null
+      mkfs.btrfs /dev/mapper/vg0-root
+      mkfs.btrfs /dev/mapper/vg0-home
+      ok
       ;;
     i5-1340P)
       ;;
@@ -332,6 +331,9 @@ base_install() {
   TITLE="Installation de base"
   NUMBER="3"
   title "$TITLE"
+  
+  # Initialisation
+  timedatectl &>/dev/null
   
   # Analyse des miroirs
   SUBTITLE="Analyse des miroirs"
