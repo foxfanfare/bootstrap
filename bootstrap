@@ -376,20 +376,20 @@ system_configuration() {
   ok
 
   # Fuseau horaire
-  #SUBTITLE="Configuration du fuseau horaire"
-  #echo -n "$SPACE2$SUBTITLE..."
-  #arch-chroot /mnt ln -sf /usr/share/zoneinfo/Europe/Paris /etc/localtime
-  #arch-chroot /mnt hwclock --systohc
-  #ok
+  SUBTITLE="Configuration du fuseau horaire"
+  echo -n "$SPACE2$SUBTITLE..."
+  artix-chroot /mnt ln -sf /usr/share/zoneinfo/Europe/Paris /etc/localtime
+  artix-chroot /mnt hwclock --systohc
+  ok
 
   ## Locales
   #SUBTITLE="Configuration des locales"
   #echo -n "$SPACE2$SUBTITLE..."
   #sed -i 's/#fr_FR.UTF/fr_FR.UTF/' /mnt/etc/locale.gen
-  #arch-chroot /mnt locale-gen &>/dev/null
+  #artix-chroot /mnt locale-gen &>/dev/null
   #echo -e "LANG=fr_FR.UTF8" > /mnt/etc/locale.conf
   #echo -e "KEYMAP=fr-latin1" > /mnt/etc/vconsole.conf
-  #arch-chroot /mnt mkdir -p "/etc/X11/xorg.conf.d/" &>/dev/null
+  #artix-chroot /mnt mkdir -p "/etc/X11/xorg.conf.d/" &>/dev/null
   #cat <<EOT > "/mnt/etc/X11/xorg.conf.d/00-keyboard.conf"
 #Section "InputClass"
 #  Identifier      "Keyboard Layout"
@@ -403,8 +403,8 @@ system_configuration() {
 #  # Configuration des comptes d'utilisateur
 #  SUBTITLE="Configuration des comptes d'utilisateur"
 #  echo -n "$SPACE2$SUBTITLE..."
-#  arch-chroot /mnt useradd -m -g users -G wheel $USER &>/dev/null
-#  printf "%s\n%s" $PASSWORD $PASSWORD | arch-chroot /mnt passwd $USER &>/dev/null
+#  artix-chroot /mnt useradd -m -g users -G wheel $USER &>/dev/null
+#  printf "%s\n%s" $PASSWORD $PASSWORD | artix-chroot /mnt passwd $USER &>/dev/null
 #  sed -i 's/# %wheel ALL=(ALL:ALL) ALL/%wheel ALL=(ALL:ALL) ALL/' /mnt/etc/sudoers
 #  ok
 }
@@ -431,7 +431,7 @@ commom_install() {
   sed -i 's/#VerbosePkgLists/VerbosePkgLists/' /mnt/etc/pacman.conf
   sed -i 's/#ParallelDownloads/ParallelDownloads/' /mnt/etc/pacman.conf
   sed -zi 's/#\[multilib\]\n#/[multilib]\n/' /mnt/etc/pacman.conf
-  arch-chroot /mnt pacman -Syu --noconfirm &>/dev/null
+  artix-chroot /mnt pacman -Syu --noconfirm &>/dev/null
   ok
 
   # Installation des paquets communs
@@ -448,25 +448,25 @@ commom_install() {
       GRAPHIC="$GRAPHIC_NVIDIA"
       ;;
   esac
-  arch-chroot /mnt pacman -S --noconfirm --needed "${GRAPHIC[@]}" &>/dev/null
+  artix-chroot /mnt pacman -S --noconfirm --needed "${GRAPHIC[@]}" &>/dev/null
   ok
 
   # Installation de l'environnement de bureau
   SUBTITLE="Installation de l'environnement de bureau"
   echo -n "$SPACE2$SUBTITLE..."
-  arch-chroot /mnt pacman -S --noconfirm --needed "${WINDOW_MANAGER[@]}" &>/dev/null
+  artix-chroot /mnt pacman -S --noconfirm --needed "${WINDOW_MANAGER[@]}" &>/dev/null
   ok
 
   # Installation des paquets communs
   SUBTITLE="Installation des paquets communs"
   echo -n "$SPACE2$SUBTITLE..."
-  arch-chroot /mnt pacman -S --noconfirm --needed "${COMMON[@]}" &>/dev/null
+  artix-chroot /mnt pacman -S --noconfirm --needed "${COMMON[@]}" &>/dev/null
   ok
 
   # Installation d'un assistant AUR
 #  SUBTITLE="Installation d'un assistant AUR"
 #  echo -n "$SPACE2$SUBTITLE..."
-#  arch-chroot /mnt &>/dev/null <<EOF
+#  artix-chroot /mnt &>/dev/null <<EOF
 #su $USER
 #cd /home/$USER
 #git clone https://aur.archlinux.org/paru.git
@@ -488,18 +488,18 @@ software_configuration() {
   # Configuration du shell
   SUBTITLE="Configuration du shell"
   echo -n "$SPACE2$SUBTITLE..."
-  arch-chroot /mnt chsh -s /usr/bin/zsh &>/dev/null
-  printf "%s" $PASSWORD | arch-chroot -u $USER /mnt chsh -s /usr/bin/zsh &>/dev/null
+  artix-chroot /mnt chsh -s /usr/bin/zsh &>/dev/null
+  printf "%s" $PASSWORD | artix-chroot -u $USER /mnt chsh -s /usr/bin/zsh &>/dev/null
   echo "ZDOTDIR=/home/$USER/.config/zsh" > /mnt/etc/zsh/zshenv
   ok
 
   # Configuration des dotfiles
   SUBTITLE="Configuration des dotfiles"
   echo -n "$SPACE2$SUBTITLE..."
-  arch-chroot -u $USER /mnt mkdir -p /home/$USER/.dotfiles &>/dev/null
-  arch-chroot -u $USER /mnt git clone --bare https://github.com/foxfanfare/dotfiles.git /home/$USER/.dotfiles &>/dev/null
-  arch-chroot -u $USER /mnt git --git-dir=/home/$USER/.dotfiles config --local status.showUntrackedFiles no
-  arch-chroot /mnt git --git-dir=/home/$USER/.dotfiles --work-tree=/home/$USER checkout
+  artix-chroot -u $USER /mnt mkdir -p /home/$USER/.dotfiles &>/dev/null
+  artix-chroot -u $USER /mnt git clone --bare https://github.com/foxfanfare/dotfiles.git /home/$USER/.dotfiles &>/dev/null
+  artix-chroot -u $USER /mnt git --git-dir=/home/$USER/.dotfiles config --local status.showUntrackedFiles no
+  artix-chroot /mnt git --git-dir=/home/$USER/.dotfiles --work-tree=/home/$USER checkout
   ok
 }
 
@@ -515,21 +515,21 @@ bootloader() {
   echo -n "$SPACE2$SUBTITLE..."
   case "$CPU" in
     i5-2410M)
-      arch-chroot /mnt grub-install --target=i386-pc --no-floppy --recheck "$DRIVE" &>/dev/null
+      artix-chroot /mnt grub-install --target=i386-pc --no-floppy --recheck "$DRIVE" &>/dev/null
       ;;
     i5-1340P)
       ;;
     i5-4570S)
       ;;
   esac
-  arch-chroot /mnt grub-mkconfig -o /boot/grub/grub.cfg &>/dev/null
+  artix-chroot /mnt grub-mkconfig -o /boot/grub/grub.cfg &>/dev/null
   ok
   
   # Configuration du réseau
   SUBTITLE="Configuration du réseau"
   echo -n "$SPACE2$SUBTITLE..."
   echo "$PROFILE" > /mnt/etc/hostname
-  arch-chroot /mnt systemctl enable NetworkManager.service &>/dev/null
+  artix-chroot /mnt systemctl enable NetworkManager.service &>/dev/null
   ok
 }
 
