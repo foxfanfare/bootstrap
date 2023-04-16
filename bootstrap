@@ -352,11 +352,11 @@ base_install() {
   basestrap /mnt "${BASE[@]}" &>/dev/null
   ok
   
-  ## Installation du noyau linux
-  #SUBTITLE="Installation du noyau linux"
-  #echo -n "$SPACE2$SUBTITLE..."
-  #basestrap /mnt "${KERNEL[@]}" #&>/dev/null
-  #ok
+  # Installation du noyau linux
+  SUBTITLE="Installation du noyau linux"
+  echo -n "$SPACE2$SUBTITLE..."
+  basestrap /mnt "${KERNEL[@]}" #&>/dev/null
+  ok
 }
 
 # Configuration du système
