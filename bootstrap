@@ -359,13 +359,13 @@ base_install() {
   # Installation des paquets de base
   SUBTITLE="Installation des paquets de base"
   echo -n "$SPACE2$SUBTITLE..."
-  basestrap /mnt "${BASE[@]}" &>/dev/null
+  pacstrap /mnt "${BASE[@]}" &>/dev/null
   ok
   
   # Installation du noyau linux
   SUBTITLE="Installation du noyau linux"
   echo -n "$SPACE2$SUBTITLE..."
-  basestrap /mnt "${KERNEL[@]}" &>/dev/null
+  pacstrap /mnt "${KERNEL[@]}" &>/dev/null
   ok
 }
 
@@ -551,7 +551,7 @@ confirm;
 collect_datas;
 detect_system;
 mount_drives;
-#base_install;
+base_install;
 #system_configuration;
 #common_install;
 #software_configuration;
