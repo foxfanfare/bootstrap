@@ -260,7 +260,7 @@ partition(){
       # Partitionnement des disques
       SUBTITLE="Partitionnement des disques"
       echo -n "$SPACE2$SUBTITLE..."
-      DRIVE="/dev/sdc"
+      DRIVE="/dev/sda"
       (
         echo "o"       # créer une nouvelle table vide de partitions DOS
         echo "n"       # ajouter une nouvelle partition (boot)
@@ -276,7 +276,7 @@ partition(){
         echo           # dernier secteur (défaut)
         echo "y"       # supprime la signature si demandée
         echo "w"       # écrire la table sur le disque et quitter
-      ) | sudo fdisk "$DRIVE" #&>/dev/null
+      ) | fdisk "$DRIVE" #&>/dev/null
       BOOT_PARTITION="${DRIVE}1"
       ROOT_PARTITION="${DRIVE}2"
       #HOME_PARTITION="${DRIVE}2"
@@ -292,8 +292,8 @@ partition(){
       # Formattage des partitions
       SUBTITLE="Formattage des partitions"
       echo -n "$SPACE2$SUBTITLE..."
-      sudo mkfs.fat -F32 "$BOOT_PARTITION" #&>/dev/null
-      sudo mkfs.btrfs /dev/mapper/cryptroot #&>/dev/null
+      mkfs.fat -F32 "$BOOT_PARTITION" #&>/dev/null
+      mkfs.btrfs /dev/mapper/cryptroot #&>/dev/null
       ok
 
       ;;
