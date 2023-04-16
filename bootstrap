@@ -276,7 +276,7 @@ partition(){
         echo           # dernier secteur (défaut)
         echo "y"       # supprime la signature si demandée
         echo "w"       # écrire la table sur le disque et quitter
-      ) | fdisk "$DRIVE" #&>/dev/null
+      ) | fdisk "$DRIVE" &>/dev/null
       BOOT_PARTITION="${DRIVE}1"
       ROOT_PARTITION="${DRIVE}2"
       #HOME_PARTITION="${DRIVE}2"
@@ -285,15 +285,15 @@ partition(){
       # Encryption de la partition
       SUBTITLE="Chiffrement de la partition"
       echo -n "$SPACE2$SUBTITLE..."
-      echo -n "$PASSWORD" | cryptsetup --key-size=512 --key-file=- luksFormat --type luks2 "$ROOT_PARTITION"
-      echo -n "$PASSWORD" | cryptsetup --key-file=- open "$ROOT_PARTITION" cryptroot 
+      echo -n "$PASSWORD" | cryptsetup --key-size=512 --key-file=- luksFormat --type luks2 "$ROOT_PARTITION" &>/dev/null
+      echo -n "$PASSWORD" | cryptsetup --key-file=- open "$ROOT_PARTITION" cryptroot  &>/dev/null
       ok
 
       # Formattage des partitions
-#      SUBTITLE="Formattage des partitions"
-#      echo -n "$SPACE2$SUBTITLE..."
-#      mkfs.fat -F32 "$BOOT_PARTITION" #&>/dev/null
-#      mkfs.btrfs /dev/mapper/cryptroot #&>/dev/null
+      SUBTITLE="Formattage des partitions"
+      echo -n "$SPACE2$SUBTITLE..."
+      mkfs.fat -F32 "$BOOT_PARTITION" #&>/dev/null
+      mkfs.btrfs /dev/mapper/cryptroot #&>/dev/null
       ok
 
       ;;
