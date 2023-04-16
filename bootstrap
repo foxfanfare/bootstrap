@@ -174,9 +174,6 @@ collect_datas() {
   TITLE="Informations d'installation"
   NUMBER="1"
   title "$TITLE"
-  
-  # Réinitialise les paramètres
-  loadkeys fr-latin1 &>/dev/null
 
   # Mot de passe
   SUBTITLE="Définition des mots de passe"
@@ -209,13 +206,13 @@ detect_system() {
   title "$TITLE"
 
   # Vérifier si un système est déjà présent
-  HOME_DRIVE=$(lsblk -l | grep home | awk '{print $1}')
-  ROOT_DRIVE=$(lsblk -l | grep "/$" | awk '{print $1}')
+  HOME_PARTITION=$(lsblk -l | grep home | awk '{print $1}')
+  ROOT_PARTITION=$(lsblk -l | grep "/$" | awk '{print $1}')
 
   # Choisir si le disque doit être partitionné
   SUBTITLE="Analyse des disques"
   echo -n "$SPACE2$SUBTITLE..."
-  if [[ -n "$ROOT_DRIVE" ]]; then
+  if [[ -n "$ROOT_PARTITION" ]]; then
     echo
     while true; do
       read -p "${WARNING}Un système est déjà présent sur le disque. Souhaitez vous le conserver ? [O/n] " CONFIRM;
@@ -263,14 +260,14 @@ partition(){
       # Partitionnement des disques
       SUBTITLE="Partitionnement des disques"
       echo -n "$SPACE2$SUBTITLE..."
-      DRIVE="/dev/sda"
+      DRIVE="/dev/sdc"
       (
         echo "o"       # créer une nouvelle table vide de partitions DOS
         echo "n"       # ajouter une nouvelle partition
         echo "p"       # primaire
         echo "1"       # partition 1
         echo           # premier secteur (défaut)
-        echo "+6G"     # +6Go
+        echo "+1G"     # +6Go
         echo "y"       # supprime la signature si demandée
         echo "n"       # ajouter une nouvelle partition
         echo "p"       # primaire
@@ -279,17 +276,25 @@ partition(){
         echo           # dernier secteur (défaut)
         echo "y"       # supprime la signature si demandée
         echo "w"       # écrire la table sur le disque et quitter
-      ) | fdisk "$DRIVE" &>/dev/null
-      ROOT_DRIVE="${DRIVE}1"
-      HOME_DRIVE="${DRIVE}2"
+      ) | sudo fdisk "$DRIVE" #&>/dev/null
+      BOOT_PARTITION="${DRIVE}1"
+      ROOT_PARTITION="${DRIVE}2"
+      #HOME_PARTITION="${DRIVE}2"
+      ok
+
+      # Encryption de la partition
+      SUBTITLE="Encryption de la partition"
+      echo -n "$SPACE2$SUBTITLE..."
+      echo -n "$PASSWORD" | cryptsetup --key-size=512 --key-file=- luksFormat --type luks2 "$ROOT_PARTITION"
+      echo -n "$PASSWORD" | cryptsetup --key-file=- open "$ROOT_PARTITION" cryptroot 
       ok
 
       # Formattage des partitions
       SUBTITLE="Formattage des partitions"
       echo -n "$SPACE2$SUBTITLE..."
-      mkfs.ext4 "$ROOT_DRIVE" &>/dev/null
-      mkfs.ext4 "$HOME_DRIVE" &>/dev/null
+      sudo mkfs.fat -F32 "$BOOT_PARTITION" #&>/dev/null
       ok
+
       ;;
     i5-1340P)
       ;;
@@ -304,9 +309,9 @@ mount_drives() {
   # Montage des partitions
   SUBTITLE="Montage des partitions"
   echo -n "$SPACE2$SUBTITLE..."
-  mount "$ROOT_DRIVE" /mnt &>/dev/null
+  mount "$ROOT_PARTITION" /mnt &>/dev/null
   mkdir -p "/mnt/home" &>/dev/null
-  mount "$HOME_DRIVE" /mnt/home &>/dev/null
+  mount "$HOME_PARTITION" /mnt/home &>/dev/null
   ok
 }
 
@@ -500,8 +505,8 @@ confirm;
 collect_datas;
 detect_system;
 mount_drives;
-base_install;
-system_configuration;
-commom_install;
-software_configuration;
-bootloader;
+#base_install;
+#system_configuration;
+#commom_install;
+#software_configuration;
+#bootloader;
