@@ -279,6 +279,7 @@ partition(){
       ) | fdisk "$DRIVE" &>/dev/null
       BOOT_PARTITION="${DRIVE}1"
       ROOT_PARTITION="${DRIVE}2"
+      CRYPTROOT="/dev/mapper/cryptroot"
       #HOME_PARTITION="${DRIVE}2"
       ok
 
@@ -293,9 +294,8 @@ partition(){
       SUBTITLE="Formattage des partitions"
       echo -n "$SPACE2$SUBTITLE..."
       mkfs.fat -F32 "$BOOT_PARTITION" &>/dev/null
-      mkfs.btrfs /dev/mapper/cryptroot &>/dev/null
+      mkfs.btrfs "$CRYPTROOT" &>/dev/null
       ok
-
       ;;
     i5-1340P)
       ;;
@@ -310,9 +310,11 @@ mount_drives() {
   # Montage des partitions
   SUBTITLE="Montage des partitions"
   echo -n "$SPACE2$SUBTITLE..."
-  mount "$ROOT_PARTITION" /mnt &>/dev/null
-  mkdir -p "/mnt/home" &>/dev/null
-  mount "$HOME_PARTITION" /mnt/home &>/dev/null
+  mkdir -p "/mnt/boot" &>/dev/null
+  #mkdir -p "/mnt/home" &>/dev/null
+  mount "$CRYPTROOT" /mnt &>/dev/null
+  mount "$BOOT_PARTITION" /mnt/boot
+  #mount "$HOME_PARTITION" /mnt/home &>/dev/null
   ok
 }
 
@@ -505,7 +507,7 @@ print_title;
 confirm;
 collect_datas;
 detect_system;
-#mount_drives;
+mount_drives;
 #base_install;
 #system_configuration;
 #commom_install;
