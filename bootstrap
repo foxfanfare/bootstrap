@@ -310,10 +310,10 @@ mount_drives() {
   # Montage des partitions
   SUBTITLE="Montage des partitions"
   echo -n "$SPACE2$SUBTITLE..."
-  mkdir -p "/mnt/boot" &>/dev/null
-  #mkdir -p "/mnt/home" &>/dev/null
   mount "$CRYPTROOT" /mnt &>/dev/null
+  mkdir -p "/mnt/boot" #&>/dev/null
   mount "$BOOT_PARTITION" /mnt/boot
+  #mkdir -p "/mnt/home" &>/dev/null
   #mount "$HOME_PARTITION" /mnt/home &>/dev/null
   ok
 }
