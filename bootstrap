@@ -313,7 +313,8 @@ partition(){
       SUBTITLE="Formattage des partitions"
       echo -n "$SPACE2$SUBTITLE..."
       mkfs.fat -F32 "$BOOT_PARTITION" &>/dev/null
-      mkfs.btrfs /dev/mapper/"$CRYPT_NAME" &>/dev/null
+      mkfs.btrfs /dev/mapper/vg0-root &>/dev/null
+      mkfs.btrfs /dev/mapper/vg0-home &>/dev/null
       ok
       ;;
     i5-1340P)
@@ -345,8 +346,7 @@ base_install() {
   # Mise à jour de l'horlage système
   SUBTITLE="Mise à jour de l'horloge système"
   echo -n "$SPACE2$SUBTITLE..."
-  ln -s /etc/runit/sv/ntpd/ /run/runit/serivce/ &>/dev/null
-  sv up ntpd
+  timedatectl &>/dev/null
   ok
 
   # Installation des paquets de base
