@@ -331,7 +331,7 @@ mount_drives() {
   echo -n "$SPACE2$SUBTITLE..."
   mount /dev/mapper/"$CRYPT_NAME" /mnt &>/dev/null
   mkdir -p "/mnt/boot" &>/dev/null
-  mount "$BOOT_PARTITION" /mnt/boot
+  mount "$BOOT_PARTITION" /mnt/boot &>/dev/null
   ok
 }
 
@@ -448,7 +448,7 @@ common_install() {
       GRAPHIC="$GRAPHIC_NVIDIA"
       ;;
   esac
-  artix-chroot /mnt pacman -S --noconfirm --needed "${GRAPHIC[@]}" #&>/dev/null
+  artix-chroot /mnt pacman -S --noconfirm --needed "${GRAPHIC[@]}" &>/dev/null
   ok
 
   # Installation de l'environnement de bureau
@@ -463,19 +463,19 @@ common_install() {
   artix-chroot /mnt pacman -S --noconfirm --needed "${COMMON[@]}" &>/dev/null
   ok
 
-#  # Installation d'un assistant AUR
-#  SUBTITLE="Installation d'un assistant AUR"
-#  echo -n "$SPACE2$SUBTITLE..."
-#  artix-chroot /mnt &>/dev/null <<EOF
-#su $USER
-#cd /home/$USER
-#git clone https://aur.archlinux.org/paru.git
-#cd paru
-#makepkg --noconfirm -si
-#cd ..
-#rm -rd paru
-#EOF
-#  ok
+  # Installation d'un assistant AUR
+  SUBTITLE="Installation d'un assistant AUR"
+  echo -n "$SPACE2$SUBTITLE..."
+  artix-chroot /mnt &>/dev/null <<EOF
+su $USER
+cd /home/$USER
+git clone https://aur.archlinux.org/paru.git
+cd paru
+makepkg --noconfirm -si
+cd ..
+rm -rd paru
+EOF
+  ok
 }
 
 # Configuration des programmes
