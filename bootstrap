@@ -294,6 +294,8 @@ partition(){
       CRYPT_PARTITION="${DRIVE}2"
       CRYPT_NAME="cryptlvm"
       CRYPT_PATH="/dev/mapper/"
+      CRYPT_ROOT="$CRYPT_PATH/vg0-root"
+      CRYPT_HOME="$CRYPT_PATH/vg0-home"
       ok
 
       # Configuration du chiffrement
@@ -316,8 +318,8 @@ partition(){
       SUBTITLE="Formattage des partitions"
       echo -n "$SPACE2$SUBTITLE..."
       mkfs.fat -F32 "$BOOT_PARTITION" &>/dev/null
-      mkfs.btrfs "$CRYPT_PATH"vg0-root &>/dev/null
-      mkfs.btrfs "$CRYPT_PATH"vg0-home &>/dev/null
+      mkfs.btrfs "$CRYPT_ROOT" &>/dev/null
+      mkfs.btrfs "$CRYPT_HOME" &>/dev/null
       ok
       ;;
     i5-1340P)
@@ -333,9 +335,11 @@ mount_drives() {
   # Montage des partitions
   SUBTITLE="Montage des partitions"
   echo -n "$SPACE2$SUBTITLE..."
-  mount /dev/mapper/"$CRYPT_NAME" /mnt &>/dev/null
+  mount "$CRYPT_ROOT" /mnt &>/dev/null
   mkdir -p "/mnt/boot" &>/dev/null
+  mkdir -p "/mnt/home" &>/dev/null
   mount "$BOOT_PARTITION" /mnt/boot &>/dev/null
+  mount "$CRYPT_HOME" /mnt/home &>/dev/null
   ok
 }
 
@@ -546,7 +550,7 @@ print_title;
 confirm;
 collect_datas;
 detect_system;
-#mount_drives;
+mount_drives;
 #base_install;
 #system_configuration;
 #common_install;
