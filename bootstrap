@@ -280,14 +280,14 @@ partition(){
       ) | fdisk "$DRIVE" &>/dev/null
       BOOT_PARTITION="${DRIVE}1"
       CRYPT_PARTITION="${DRIVE}2"
-      CRYPT_PARTITION_NAME="cryptroot"
+      CRYPT_NAME="cryptroot"
       ok
 
       # Configuration du chiffrement
       SUBTITLE="Configuration du chiffrement"
       echo -n "$SPACE2$SUBTITLE..."
       echo -n "$PASSWORD" | cryptsetup --key-size=512 --key-file=- luksFormat --type luks2 "$CRYPT_PARTITION" &>/dev/null
-      echo -n "$PASSWORD" | cryptsetup --key-file=- open "$CRYPT_PARTITION" "$CRYPT_PARTITION_NAME" &>/dev/null
+      echo -n "$PASSWORD" | cryptsetup --key-file=- open "$CRYPT_PARTITION" "$CRYPT_NAME" &>/dev/null
       ok
 
       # Création des partitions chiffrées
@@ -303,7 +303,7 @@ partition(){
       SUBTITLE="Formattage des partitions"
       echo -n "$SPACE2$SUBTITLE..."
       mkfs.fat -F32 "$BOOT_PARTITION" &>/dev/null
-      mkfs.btrfs /dev/mapper/"$CRYPT_PARTITION" &>/dev/null
+      mkfs.btrfs /dev/mapper/"$CRYPT_NAME" &>/dev/null
       ok
       ;;
     i5-1340P)
