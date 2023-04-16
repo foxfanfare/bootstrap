@@ -550,6 +550,6 @@ detect_system;
 mount_drives;
 base_install;
 system_configuration;
-#common_install;
+common_install;
 #software_configuration;
 #bootloader;
