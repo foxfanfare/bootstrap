@@ -319,7 +319,7 @@ mount_drives() {
   # Montage des partitions
   SUBTITLE="Montage des partitions"
   echo -n "$SPACE2$SUBTITLE..."
-  mount "$CRYPT_PARTITION" /mnt &>/dev/null
+  mount /dev/mapper/"$CRYPT_NAME" /mnt &>/dev/null
   mkdir -p "/mnt/boot" #&>/dev/null
   mount "$BOOT_PARTITION" /mnt/boot
   ok
