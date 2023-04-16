@@ -407,7 +407,8 @@ system_configuration() {
   echo -n "$SPACE2$SUBTITLE..."
   arch-chroot /mnt useradd -m -g users -G wheel $USER &>/dev/null
   printf "%s\n%s" $PASSWORD $PASSWORD | arch-chroot /mnt passwd $USER &>/dev/null
-  sed -i 's/# %wheel ALL=(ALL:ALL) ALL/%wheel ALL=(ALL:ALL) ALL/' /mnt/etc/sudoers
+  #sed -i 's/# %wheel ALL=(ALL:ALL) ALL/%wheel ALL=(ALL:ALL) ALL/' /mnt/etc/sudoers
+  sed -i 's/# %wheel ALL=(ALL) NOPASSWD: ALL/%wheel ALL=(ALL) NOPASSWD: ALL/' /mnt/etc/sudoers
   ok
 }
 
@@ -470,7 +471,6 @@ common_install() {
 cd /home/$USER
 su $USER
 git clone https://aur.archlinux.org/paru.git
-exit
 makepkg --noconfirm -si
 cd ..
 rm -rd paru
@@ -536,6 +536,12 @@ bootloader() {
 127.0.1.1   "$PROFILE".localdomain  "$PROFILE"
 EOT
   arch-chroot /mnt systemctl enable NetworkManager.service &>/dev/null
+  ok
+
+  # Configuration des comptes d'utilisateur
+  SUBTITLE="Configuration des comptes d'utilisateur"
+  sed -i 's/# %wheel ALL=(ALL:ALL) ALL/%wheel ALL=(ALL:ALL) ALL/' /mnt/etc/sudoers
+  sed -i 's/%wheel ALL=(ALL) NOPASSWD: ALL/# %wheel ALL=(ALL) NOPASSWD: ALL/' /mnt/etc/sudoers
   ok
 }
 
