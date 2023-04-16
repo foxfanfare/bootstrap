@@ -263,13 +263,13 @@ partition(){
       DRIVE="/dev/sdc"
       (
         echo "o"       # créer une nouvelle table vide de partitions DOS
-        echo "n"       # ajouter une nouvelle partition
+        echo "n"       # ajouter une nouvelle partition (boot)
         echo "p"       # primaire
         echo "1"       # partition 1
         echo           # premier secteur (défaut)
         echo "+1G"     # +6Go
         echo "y"       # supprime la signature si demandée
-        echo "n"       # ajouter une nouvelle partition
+        echo "n"       # ajouter une nouvelle partition (encrypted root)
         echo "p"       # primaire
         echo "2"       # partition 2
         echo           # premier secteur (défaut)
@@ -293,6 +293,7 @@ partition(){
       SUBTITLE="Formattage des partitions"
       echo -n "$SPACE2$SUBTITLE..."
       sudo mkfs.fat -F32 "$BOOT_PARTITION" #&>/dev/null
+      sudo mkfs.btrfs /dev/mapper/cryptroot #&>/dev/null
       ok
 
       ;;
