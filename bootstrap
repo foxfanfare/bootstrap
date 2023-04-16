@@ -419,19 +419,19 @@ commom_install() {
   # Analyse des miroirs
   SUBTITLE="Analyse des miroirs"
   echo -n "$SPACE2$SUBTITLE..."
-  cp /etc/pacman.d/mirrorlist /etc/pacman.d/mirrorlist-artix
-  rankmirrors -n 5 /etc/pacman.d/mirrorlist-artix > /etc/pacman.d/mirrorlist
+  curl "https://gitea.artixlinux.org/packagesA/artix-mirrorlist/raw/branch/master/trunk/mirrorlist" > /mnt/etc/pacman.d/mirrorlist
+  rankmirrors -n 10 /mnt/etc/pacman.d/mirrorlist-artix > /mnt/etc/pacman.d/mirrorlist
   ok
 
   # Configuration et mise à jour de pacman
-  #SUBTITLE="Configuration et mise à jour de pacman"
-  #echo -n "$SPACE2$SUBTITLE..."
-  #sed -i 's/#Color/Color/' /mnt/etc/pacman.conf
-  #sed -i 's/#VerbosePkgLists/VerbosePkgLists/' /mnt/etc/pacman.conf
-  #sed -i 's/#ParallelDownloads/ParallelDownloads/' /mnt/etc/pacman.conf
-  #sed -zi 's/#\[multilib\]\n#/[multilib]\n/' /mnt/etc/pacman.conf
-  #artix-chroot /mnt pacman -Syu --noconfirm &>/dev/null
-  #ok
+  SUBTITLE="Configuration et mise à jour de pacman"
+  echo -n "$SPACE2$SUBTITLE..."
+  sed -i 's/#Color/Color\nILoveCandy/' /mnt/etc/pacman.conf
+  sed -i 's/#VerbosePkgLists/VerbosePkgLists/' /mnt/etc/pacman.conf
+  sed -i 's/#ParallelDownloads/ParallelDownloads/' /mnt/etc/pacman.conf
+  sed -zi 's/#\[multilib\]\n#/[multilib]\n/' /mnt/etc/pacman.conf
+  artix-chroot /mnt pacman -Syu --noconfirm &>/dev/null
+  ok
 
   ## Installation des paquets communs
   #SUBTITLE="Installation des drivers graphiques"
