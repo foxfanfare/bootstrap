@@ -61,9 +61,9 @@ deline() {
 BASE=(
   base
   base-devel
-  pacman-contrib
   runit
   elogind-runit
+  pacman-contrib
 )
 
 KERNEL=(
@@ -342,16 +342,16 @@ base_install() {
   # Mise à jour de l'horlage système
   SUBTITLE="Mise à jour de l'horloge système"
   echo -n "$SPACE2$SUBTITLE..."
-  ln -s /etc/runit/sv/ntpd /run/runit/serivce/
+  ln -s /etc/runit/sv/ntpd/ /run/runit/serivce/ &>/dev/null
   sv up ntpd
   ok
 
   # Installation des paquets de base
-  #SUBTITLE="Installation des paquets de base"
-  #echo -n "$SPACE2$SUBTITLE..."
-  #basestrap /mnt "${BASE[@]}" #&>/dev/null
-  #ok
-  #
+  SUBTITLE="Installation des paquets de base"
+  echo -n "$SPACE2$SUBTITLE..."
+  basestrap /mnt "${BASE[@]}" &>/dev/null
+  ok
+  
   ## Installation du noyau linux
   #SUBTITLE="Installation du noyau linux"
   #echo -n "$SPACE2$SUBTITLE..."
