@@ -288,21 +288,21 @@ partition(){
       ok
 
       # Création des partitions chiffrées
-      SUBTITLE="Création des partitions chiffrées"
-      echo -n "$SPACE2$SUBTITLE..."
+      #SUBTITLE="Création des partitions chiffrées"
+      #echo -n "$SPACE2$SUBTITLE..."
       #pvcreate /dev/mapper/"$CRYPT_PARTITION_NAME"
       #vgcreate vg0 /dev/mapper/"$CRYPT_PARTITION_NAME"
       #lvcreate -L 6G vg0 -n root
       #lvcreate -l 100%FREE vg0 -n home
-      ok
+      #ok
 
       # Formattage des partitions
-      SUBTITLE="Formattage des partitions"
-      echo -n "$SPACE2$SUBTITLE..."
-      mkfs.fat -F32 "$BOOT_PARTITION" #&>/dev/null
-      mkfs.btrfs /dev/mapper/vg0-root
-      mkfs.btrfs /dev/mapper/vg0-home
-      ok
+      #SUBTITLE="Formattage des partitions"
+      #echo -n "$SPACE2$SUBTITLE..."
+      #mkfs.fat -F32 "$BOOT_PARTITION" #&>/dev/null
+      #mkfs.btrfs /dev/mapper/vg0-root
+      #mkfs.btrfs /dev/mapper/vg0-home
+      #ok
       ;;
     i5-1340P)
       ;;
