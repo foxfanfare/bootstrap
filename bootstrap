@@ -536,11 +536,11 @@ bootloader() {
 # Exécution du script
 # ------------------------------------------------
 print_title;
-#confirm;
-#collect_datas;
-#detect_system;
-#mount_drives;
-#base_install;
+confirm;
+collect_datas;
+detect_system;
+mount_drives;
+base_install;
 system_configuration;
 common_install;
 #software_configuration;
