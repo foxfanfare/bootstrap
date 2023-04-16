@@ -471,7 +471,7 @@ su $USER
 cd /home/$USER
 git clone https://aur.archlinux.org/paru.git
 cd paru
-echo -n "$PASSWORD" | makepkg --noconfirm -si
+printf "%s" "$PASSWORD" | makepkg --noconfirm -si
 cd ..
 rm -rd paru
 EOF
