@@ -267,7 +267,7 @@ partition(){
         echo "p"       # primaire
         echo "1"       # partition 1
         echo           # premier secteur (défaut)
-        echo "+1G"     # +6Go
+        echo "+1G"     # +1Go
         echo "y"       # supprime la signature si demandée
         echo "n"       # ajouter une nouvelle partition (encrypted root)
         echo "p"       # primaire
@@ -283,11 +283,11 @@ partition(){
       #ok
 
       # Encryption de la partition
-      #SUBTITLE="Chiffrement de la partition"
-      #echo -n "$SPACE2$SUBTITLE..."
-      #echo -n "$PASSWORD" | cryptsetup --key-size=512 --key-file=- luksFormat --type luks2 "$ROOT_PARTITION"
-      #echo -n "$PASSWORD" | cryptsetup --key-file=- open "$ROOT_PARTITION" cryptroot 
-      #ok
+      SUBTITLE="Chiffrement de la partition"
+      echo -n "$SPACE2$SUBTITLE..."
+      echo -n "$PASSWORD" | cryptsetup --key-size=512 --key-file=- luksFormat --type luks2 "$ROOT_PARTITION"
+      echo -n "$PASSWORD" | cryptsetup --key-file=- open "$ROOT_PARTITION" cryptroot 
+      ok
 
       # Formattage des partitions
 #      SUBTITLE="Formattage des partitions"
@@ -505,7 +505,7 @@ print_title;
 confirm;
 collect_datas;
 detect_system;
-mount_drives;
+#mount_drives;
 #base_install;
 #system_configuration;
 #commom_install;
