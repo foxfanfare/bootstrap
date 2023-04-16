@@ -1,8 +1,8 @@
 #!/usr/bin/env bash
 
-# ================================= #
-# SCRIPT D'INSTALLATION ARTIX LINUX #
-# ================================= #
+# =================================== #
+# SCRIPT D'INSTALLATION DE ARCH LINUX #
+# =================================== #
 
 # ------------------------------------------------
 # INSTALLATION
@@ -138,10 +138,10 @@ AUR=(
 # ------------------------------------------------
 print_title() {
   clear
-  echo "${BOLD}  --------------------------------------  "
-  echo " | SCRIPT D'INSTALLATION DE ARTIX LINUX |"
-  echo " | v.${VERSION}                         |"
-  echo "  -------------------------------------- ${NORMAL}"
+  echo "${BOLD}  -------------------------------------  "
+  echo " | SCRIPT D'INSTALLATION DE ARCH LINUX |"
+  echo " | v.${VERSION}                        |"
+  echo "  ------------------------------------- ${NORMAL}"
   echo
 }
 
@@ -301,13 +301,13 @@ partition(){
       ok
 
       # Création des partitions chiffrées
-      #SUBTITLE="Création des partitions chiffrées"
-      #echo -n "$SPACE2$SUBTITLE..."
-      #pvcreate /dev/mapper/"$CRYPT_PARTITION_NAME"
-      #vgcreate vg0 /dev/mapper/"$CRYPT_PARTITION_NAME"
-      #lvcreate -L 6G vg0 -n root
-      #lvcreate -l 100%FREE vg0 -n home
-      #ok
+      SUBTITLE="Création des partitions chiffrées"
+      echo -n "$SPACE2$SUBTITLE..."
+      pvcreate /dev/mapper/"$CRYPT_NAME"
+      vgcreate vg0 /dev/mapper/"$CRYPT_NAME"
+      lvcreate -L 6G vg0 -n root
+      lvcreate -l 100%FREE vg0 -n home
+      ok
 
       # Formattage des partitions
       SUBTITLE="Formattage des partitions"
@@ -378,18 +378,18 @@ system_configuration() {
   # Fuseau horaire
   SUBTITLE="Configuration du fuseau horaire"
   echo -n "$SPACE2$SUBTITLE..."
-  artix-chroot /mnt ln -sf /usr/share/zoneinfo/Europe/Paris /etc/localtime
-  artix-chroot /mnt hwclock --systohc
+  arch-chroot /mnt ln -sf /usr/share/zoneinfo/Europe/Paris /etc/localtime
+  arch-chroot /mnt hwclock --systohc
   ok
 
   ## Locales
   SUBTITLE="Configuration des locales"
   echo -n "$SPACE2$SUBTITLE..."
   sed -i 's/#fr_FR/fr_FR/' /mnt/etc/locale.gen
-  artix-chroot /mnt locale-gen &>/dev/null
+  arch-chroot /mnt locale-gen &>/dev/null
   echo -e "LANG=fr_FR.UTF8" > /mnt/etc/locale.conf
   echo -e "KEYMAP=fr-latin1" > /mnt/etc/vconsole.conf
-#  artix-chroot /mnt mkdir -p "/etc/X11/xorg.conf.d/" &>/dev/null
+#  arch-chroot /mnt mkdir -p "/etc/X11/xorg.conf.d/" &>/dev/null
 #  cat <<EOT > "/mnt/etc/X11/xorg.conf.d/00-keyboard.conf"
 #Section "InputClass"
 #  Identifier      "Keyboard Layout"
@@ -403,8 +403,8 @@ system_configuration() {
   # Configuration des comptes d'utilisateur
   SUBTITLE="Configuration des comptes d'utilisateur"
   echo -n "$SPACE2$SUBTITLE..."
-  artix-chroot /mnt useradd -m -g users -G wheel $USER &>/dev/null
-  printf "%s\n%s" $PASSWORD $PASSWORD | artix-chroot /mnt passwd $USER &>/dev/null
+  arch-chroot /mnt useradd -m -g users -G wheel $USER &>/dev/null
+  printf "%s\n%s" $PASSWORD $PASSWORD | arch-chroot /mnt passwd $USER &>/dev/null
   sed -i 's/# %wheel ALL=(ALL:ALL) ALL/%wheel ALL=(ALL:ALL) ALL/' /mnt/etc/sudoers
   ok
 }
@@ -419,9 +419,7 @@ common_install() {
   # Classement des miroirs
   SUBTITLE="Classement des miroirs"
   echo -n "$SPACE2$SUBTITLE..."
-  MIRROR_LINK="https://gitea.artixlinux.org/packagesA/artix-mirrorlist/raw/branch/master/trunk/mirrorlist"
-  #curl -s "$MIRROR_LINK" > /mnt/etc/pacman.d/mirrorlist-artix
-  #rankmirrors -n 10 /mnt/etc/pacman.d/mirrorlist-artix > /mnt/etc/pacman.d/mirrorlist
+  reflector --country France --age 12 --protocol https --sort rate --save /etc/pacman.d/mirrorlist &>/dev/null
   ok
 
   # Configuration et mise à jour de pacman
@@ -431,7 +429,7 @@ common_install() {
   sed -i 's/#VerbosePkgLists/VerbosePkgLists/' /mnt/etc/pacman.conf
   sed -i 's/#ParallelDownloads/ParallelDownloads/' /mnt/etc/pacman.conf
   sed -zi 's/#\[multilib\]\n#/[multilib]\n/' /mnt/etc/pacman.conf
-  artix-chroot /mnt pacman -Syu --noconfirm &>/dev/null
+  arch-chroot /mnt pacman -Syu --noconfirm &>/dev/null
   ok
 
   # Installation des paquets communs
@@ -448,25 +446,25 @@ common_install() {
       GRAPHIC="$GRAPHIC_NVIDIA"
       ;;
   esac
-  artix-chroot /mnt pacman -S --noconfirm --needed "${GRAPHIC[@]}" &>/dev/null
+  arch-chroot /mnt pacman -S --noconfirm --needed "${GRAPHIC[@]}" &>/dev/null
   ok
 
   # Installation de l'environnement de bureau
   #SUBTITLE="Installation de l'environnement de bureau"
   #echo -n "$SPACE2$SUBTITLE..."
-  #artix-chroot /mnt pacman -S --noconfirm --needed "${WINDOW_MANAGER[@]}" #&>/dev/null
+  #arch-chroot /mnt pacman -S --noconfirm --needed "${WINDOW_MANAGER[@]}" #&>/dev/null
   #ok
 
   # Installation des paquets communs
   SUBTITLE="Installation des paquets communs"
   echo -n "$SPACE2$SUBTITLE..."
-  artix-chroot /mnt pacman -S --noconfirm --needed "${COMMON[@]}" #&>/dev/null
+  arch-chroot /mnt pacman -S --noconfirm --needed "${COMMON[@]}" #&>/dev/null
   ok
 
   # Installation d'un assistant AUR
   SUBTITLE="Installation d'un assistant AUR"
   echo -n "$SPACE2$SUBTITLE..."
-  artix-chroot /mnt &>/dev/null <<EOF
+  arch-chroot /mnt &>/dev/null <<EOF
 su $USER
 cd /home/$USER
 git clone https://aur.archlinux.org/paru.git
@@ -488,18 +486,18 @@ software_configuration() {
   # Configuration du shell
   SUBTITLE="Configuration du shell"
   echo -n "$SPACE2$SUBTITLE..."
-  artix-chroot /mnt chsh -s /usr/bin/zsh &>/dev/null
-  printf "%s" $PASSWORD | artix-chroot -u $USER /mnt chsh -s /usr/bin/zsh &>/dev/null
+  arch-chroot /mnt chsh -s /usr/bin/zsh &>/dev/null
+  printf "%s" $PASSWORD | arch-chroot -u $USER /mnt chsh -s /usr/bin/zsh &>/dev/null
   echo "ZDOTDIR=/home/$USER/.config/zsh" > /mnt/etc/zsh/zshenv
   ok
 
   # Configuration des dotfiles
   SUBTITLE="Configuration des dotfiles"
   echo -n "$SPACE2$SUBTITLE..."
-  artix-chroot -u $USER /mnt mkdir -p /home/$USER/.dotfiles &>/dev/null
-  artix-chroot -u $USER /mnt git clone --bare https://github.com/foxfanfare/dotfiles.git /home/$USER/.dotfiles &>/dev/null
-  artix-chroot -u $USER /mnt git --git-dir=/home/$USER/.dotfiles config --local status.showUntrackedFiles no
-  artix-chroot /mnt git --git-dir=/home/$USER/.dotfiles --work-tree=/home/$USER checkout
+  arch-chroot -u $USER /mnt mkdir -p /home/$USER/.dotfiles &>/dev/null
+  arch-chroot -u $USER /mnt git clone --bare https://github.com/foxfanfare/dotfiles.git /home/$USER/.dotfiles &>/dev/null
+  arch-chroot -u $USER /mnt git --git-dir=/home/$USER/.dotfiles config --local status.showUntrackedFiles no
+  arch-chroot /mnt git --git-dir=/home/$USER/.dotfiles --work-tree=/home/$USER checkout
   ok
 }
 
@@ -515,14 +513,14 @@ bootloader() {
   echo -n "$SPACE2$SUBTITLE..."
   case "$CPU" in
     i5-2410M)
-      artix-chroot /mnt grub-install --target=i386-pc --no-floppy --recheck "$DRIVE" &>/dev/null
+      arch-chroot /mnt grub-install --target=i386-pc --no-floppy --recheck "$DRIVE" &>/dev/null
       ;;
     i5-1340P)
       ;;
     i5-4570S)
       ;;
   esac
-  artix-chroot /mnt grub-mkconfig -o /boot/grub/grub.cfg &>/dev/null
+  arch-chroot /mnt grub-mkconfig -o /boot/grub/grub.cfg &>/dev/null
   ok
   
   # Configuration du réseau
@@ -535,7 +533,7 @@ bootloader() {
 ::1         localhost
 127.0.1.1   "$PROFILE".localdomain  "$PROFILE"
 EOT
-  artix-chroot /mnt systemctl enable NetworkManager.service &>/dev/null
+  arch-chroot /mnt systemctl enable NetworkManager.service &>/dev/null
   ok
 }
 
@@ -545,9 +543,9 @@ print_title;
 confirm;
 collect_datas;
 detect_system;
-mount_drives;
-base_install;
-system_configuration;
-common_install;
+#mount_drives;
+#base_install;
+#system_configuration;
+#common_install;
 #software_configuration;
 #bootloader;
