@@ -514,7 +514,7 @@ bootloader() {
   # Configuration de mkinitcpio
   SUBTITLE="Configuration de mkinitcpio"
   echo -n "$SPACE2$SUBTITLE..."
-  sed -i "block filesystems fsck)/block encrypt lvm2 filesystems fsck)/" /mnt/etc/sudoers
+  sed -i "block filesystems fsck)/block encrypt lvm2 filesystems fsck)/" /mnt/etc/systemd/system/getty.target.wants/getty@tty1.service
   arch-chroot /mnt mkinitcpio -P
   ok
 
