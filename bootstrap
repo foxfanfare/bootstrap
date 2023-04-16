@@ -290,10 +290,10 @@ partition(){
       # Création des partitions chiffrées
       SUBTITLE="Création des partitions chiffrées"
       echo -n "$SPACE2$SUBTITLE..."
-      pvcreate /dev/mapper/"$CRYPT_PARTITION_NAME"
-      vgcreate vg0 /dev/mapper/"$CRYPT_PARTITION_NAME"
-      lvcreate -L 6G vg0 -n root
-      lvcreate -l 100%FREE vg0 -n home
+      #pvcreate /dev/mapper/"$CRYPT_PARTITION_NAME"
+      #vgcreate vg0 /dev/mapper/"$CRYPT_PARTITION_NAME"
+      #lvcreate -L 6G vg0 -n root
+      #lvcreate -l 100%FREE vg0 -n home
       ok
 
       # Formattage des partitions
