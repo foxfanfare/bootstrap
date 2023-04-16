@@ -411,7 +411,7 @@ EOT
 
 # Installation des autres paquets
 # ------------------------------------------------
-commom_install() {
+common_install() {
   TITLE="Installation des programmes complémentaires"
   NUMBER="5"
   title "$TITLE"
@@ -457,25 +457,25 @@ commom_install() {
   artix-chroot /mnt pacman -S --noconfirm --needed "${WINDOW_MANAGER[@]}" &>/dev/null
   ok
 
-  ## Installation des paquets communs
-  #SUBTITLE="Installation des paquets communs"
-  #echo -n "$SPACE2$SUBTITLE..."
-  #artix-chroot /mnt pacman -S --noconfirm --needed "${COMMON[@]}" &>/dev/null
-  #ok
+  # Installation des paquets communs
+  SUBTITLE="Installation des paquets communs"
+  echo -n "$SPACE2$SUBTITLE..."
+  artix-chroot /mnt pacman -S --noconfirm --needed "${COMMON[@]}" &>/dev/null
+  ok
 
   # Installation d'un assistant AUR
-#  SUBTITLE="Installation d'un assistant AUR"
-#  echo -n "$SPACE2$SUBTITLE..."
-#  artix-chroot /mnt &>/dev/null <<EOF
-#su $USER
-#cd /home/$USER
-#git clone https://aur.archlinux.org/paru.git
-#cd paru
-#makepkg --noconfirm -si
-#cd ..
-#rm -rd paru
-#EOF
-#  ok
+  SUBTITLE="Installation d'un assistant AUR"
+  echo -n "$SPACE2$SUBTITLE..."
+  artix-chroot /mnt &>/dev/null <<EOF
+su $USER
+cd /home/$USER
+git clone https://aur.archlinux.org/paru.git
+cd paru
+makepkg --noconfirm -si
+cd ..
+rm -rd paru
+EOF
+  ok
 }
 
 # Configuration des programmes
@@ -536,12 +536,12 @@ bootloader() {
 # Exécution du script
 # ------------------------------------------------
 print_title;
-confirm;
-collect_datas;
-detect_system;
-mount_drives;
-base_install;
+#confirm;
+#collect_datas;
+#detect_system;
+#mount_drives;
+#base_install;
 system_configuration;
-commom_install;
+common_install;
 #software_configuration;
 #bootloader;
