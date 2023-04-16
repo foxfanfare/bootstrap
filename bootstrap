@@ -178,6 +178,7 @@ collect_datas() {
   # Mot de passe
   SUBTITLE="Définition des mots de passe"
   echo "$SPACE2$SUBTITLE..."
+  timedatectl
   while true; do
     read -sp "${SPACE3}Mot de passe : " PASSWORD;
     echo
@@ -262,15 +263,13 @@ partition(){
       echo -n "$SPACE2$SUBTITLE..."
       DRIVE="/dev/sda"
       (
-        echo "o"       # créer une nouvelle table vide de partitions DOS
+        echo "g"       # créer une nouvelle table vide de partitions DOS
         echo "n"       # ajouter une nouvelle partition
-        echo "p"       # primaire
         echo "1"       # partition 1
         echo           # premier secteur (défaut)
         echo "+1G"     # +1Go
         echo "y"       # supprime la signature si demandée
         echo "n"       # ajouter une nouvelle partition
-        echo "p"       # primaire
         echo "2"       # partition 2
         echo           # premier secteur (défaut)
         echo           # dernier secteur (défaut)
@@ -278,22 +277,22 @@ partition(){
         echo "w"       # écrire la table sur le disque et quitter
       ) | fdisk "$DRIVE" &>/dev/null
       BOOT_PARTITION="${DRIVE}1"
-      ROOT_PARTITION="${DRIVE}2"
-      #HOME_PARTITION="${DRIVE}2"
+      CRYPT_PARTITION="${DRIVE}2"
+      CRYPT_PARTITION_NAME="cryptlvm"
       ok
 
       # Chiffrement de la partition
       SUBTITLE="Chiffrement de la partition"
       echo -n "$SPACE2$SUBTITLE..."
-      echo -n "$PASSWORD" | cryptsetup --key-size=512 --key-file=- luksFormat --type luks2 "$ROOT_PARTITION" &>/dev/null
-      echo -n "$PASSWORD" | cryptsetup --key-file=- open "$ROOT_PARTITION" cryptlvm  &>/dev/null
+      echo -n "$PASSWORD" | cryptsetup --key-size=512 --key-file=- luksFormat --type luks2 "$CRYPT_PARTITION" &>/dev/null
+      echo -n "$PASSWORD" | cryptsetup --key-file=- open "$CRYPT_PARTITION" "$CRYPT_PARTITION_NAME"  &>/dev/null
       ok
 
       # Création des partitions chiffrées
       SUBTITLE="Création des partitions chiffrées"
       echo -n "$SPACE2$SUBTITLE..."
-      pvcreate /dev/mapper/cryptlvm
-      vgcreate vg0 /dev/mapper/cryptlvm
+      pvcreate /dev/mapper/"$CRYPT_PARTITION_NAME"
+      vgcreate vg0 /dev/mapper/"$CRYPT_PARTITION_NAME"
       lvcreate -L 6G vg0 -n root
       lvcreate -l 100%FREE vg0 -n home
       ok
