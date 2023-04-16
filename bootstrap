@@ -209,10 +209,12 @@ detect_system() {
   HOME_PARTITION=$(lsblk -l | grep home | awk '{print $1}')
   ROOT_PARTITION=$(lsblk -l | grep "/$" | awk '{print $1}')
 
-  # Choisir si le disque doit être partitionné
-  SUBTITLE="Analyse des disques"
-  echo -n "$SPACE2$SUBTITLE..."
+  # ! Si pas d'analyse !
   partition
+
+  # Choisir si le disque doit être partitionné
+  #SUBTITLE="Analyse des disques"
+  #echo -n "$SPACE2$SUBTITLE..."
   #if [[ -n "$ROOT_PARTITION" ]]; then
   #  echo
   #  while true; do
