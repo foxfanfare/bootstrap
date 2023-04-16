@@ -283,17 +283,17 @@ partition(){
       ok
 
       # Encryption de la partition
-      SUBTITLE="Encryption de la partition"
+      SUBTITLE="Chiffrement de la partition"
       echo -n "$SPACE2$SUBTITLE..."
       echo -n "$PASSWORD" | cryptsetup --key-size=512 --key-file=- luksFormat --type luks2 "$ROOT_PARTITION"
       echo -n "$PASSWORD" | cryptsetup --key-file=- open "$ROOT_PARTITION" cryptroot 
       ok
 
       # Formattage des partitions
-      SUBTITLE="Formattage des partitions"
-      echo -n "$SPACE2$SUBTITLE..."
-      mkfs.fat -F32 "$BOOT_PARTITION" #&>/dev/null
-      mkfs.btrfs /dev/mapper/cryptroot #&>/dev/null
+#      SUBTITLE="Formattage des partitions"
+#      echo -n "$SPACE2$SUBTITLE..."
+#      mkfs.fat -F32 "$BOOT_PARTITION" #&>/dev/null
+#      mkfs.btrfs /dev/mapper/cryptroot #&>/dev/null
       ok
 
       ;;
