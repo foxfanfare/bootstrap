@@ -133,7 +133,7 @@ AUR=(
 # ------------------------------------------------
 print_title() {
   clear
-  echo "${BOLD}| -------------------------------------  "
+  echo "${BOLD} | -------------------------------------  "
   echo " | SCRIPT D'INSTALLATION DE ARCH LINUX |"
   echo " | v.${VERSION}                        |"
   echo "  ------------------------------------ |${NORMAL}"
@@ -511,39 +511,46 @@ bootloader() {
   NUMBER="7"
   title "$TITLE"
 
-  # Installation du bootloader
-  SUBTITLE="Configuration du bootloader"
+  # Configuration de mkinitcpio
+  SUBTITLE="Configuration de mkinitcpio"
   echo -n "$SPACE2$SUBTITLE..."
-  case "$CPU" in
-    i5-2410M)
-      arch-chroot /mnt grub-install --target=i386-pc --no-floppy --recheck "$DRIVE" &>/dev/null
-      ;;
-    i5-1340P)
-      ;;
-    i5-4570S)
-      ;;
-  esac
-  arch-chroot /mnt grub-mkconfig -o /boot/grub/grub.cfg &>/dev/null
-  ok
-  
-  # Configuration du réseau
-  SUBTITLE="Configuration du réseau"
-  echo -n "$SPACE2$SUBTITLE..."
-  echo "$PROFILE" > /mnt/etc/hostname
-  cat <<EOT > "/mnt/etc/hosts"
-127.0.0.1   localhost
-::1         localhost
-127.0.1.1   "$PROFILE".localdomain  "$PROFILE"
-EOT
-  arch-chroot /mnt systemctl enable NetworkManager.service &>/dev/null
+  sed -i "block filesystems fsck)/block encrypt lvm2 filesystems fsck)" /mnt/etc/sudoers
+  arch-chroot /mnt mkinitcpio -P
   ok
 
-  # Configuration des comptes d'utilisateur
-  SUBTITLE="Configuration des comptes d'utilisateur"
-  sed -i "s/# %wheel ALL=(ALL:ALL) ALL/%wheel ALL=(ALL:ALL) ALL/" /mnt/etc/sudoers
-  sed -i "s/%wheel ALL=(ALL:ALL) NOPASSWD: ALL/# %wheel ALL=(ALL:ALL) NOPASSWD: ALL/" /mnt/etc/sudoers
-  sed -i "s/--noclear/--noclear --autologin ${USER}/" /mnt/etc/sudoers
-  ok
+#  # Installation du bootloader
+#  SUBTITLE="Configuration du bootloader"
+#  echo -n "$SPACE2$SUBTITLE..."
+#  case "$CPU" in
+#    i5-2410M)
+#      arch-chroot /mnt grub-install --target=i386-pc --no-floppy --recheck "$DRIVE" &>/dev/null
+#      ;;
+#    i5-1340P)
+#      ;;
+#    i5-4570S)
+#      ;;
+#  esac
+#  arch-chroot /mnt grub-mkconfig -o /boot/grub/grub.cfg &>/dev/null
+#  ok
+#  
+#  # Configuration du réseau
+#  SUBTITLE="Configuration du réseau"
+#  echo -n "$SPACE2$SUBTITLE..."
+#  echo "$PROFILE" > /mnt/etc/hostname
+#  cat <<EOT > "/mnt/etc/hosts"
+#127.0.0.1   localhost
+#::1         localhost
+#127.0.1.1   "$PROFILE".localdomain  "$PROFILE"
+#EOT
+#  arch-chroot /mnt systemctl enable NetworkManager.service &>/dev/null
+#  ok
+#
+#  # Configuration des comptes d'utilisateur
+#  SUBTITLE="Configuration des comptes d'utilisateur"
+#  sed -i "s/# %wheel ALL=(ALL:ALL) ALL/%wheel ALL=(ALL:ALL) ALL/" /mnt/etc/sudoers
+#  sed -i "s/%wheel ALL=(ALL:ALL) NOPASSWD: ALL/# %wheel ALL=(ALL:ALL) NOPASSWD: ALL/" /mnt/etc/sudoers
+#  sed -i "s/--noclear/--noclear --autologin ${USER}/" /mnt/etc/sudoers
+#  ok
 }
 
 # Exécution du script
@@ -557,4 +564,4 @@ base_install;
 system_configuration;
 common_install;
 software_configuration;
-#bootloader;
+bootloader;
