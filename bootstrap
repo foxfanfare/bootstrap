@@ -263,7 +263,7 @@ partition(){
       # Partitionnement des disques
       SUBTITLE="Partitionnement des disques"
       echo -n "$SPACE2$SUBTITLE..."
-      DRIVE="/dev/sda"
+      DRIVE="/dev/vda"
       (
         echo "g"       # créer une nouvelle table vide de partitions DOS
         echo "n"       # ajouter une nouvelle partition
@@ -338,7 +338,7 @@ base_install() {
   # Analyse des miroirs
   SUBTITLE="Analyse des miroirs"
   echo -n "$SPACE2$SUBTITLE..."
-  #reflector --country France --age 12 --protocol https --sort rate --save /etc/pacman.d/mirrorlist &>/dev/null
+  reflector --country France --age 12 --protocol https --sort rate --save /etc/pacman.d/mirrorlist &>/dev/null
   ok
 
   # Installation des paquets de base
