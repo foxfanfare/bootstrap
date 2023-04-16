@@ -280,7 +280,7 @@ partition(){
       BOOT_PARTITION="${DRIVE}1"
       ROOT_PARTITION="${DRIVE}2"
       #HOME_PARTITION="${DRIVE}2"
-      #ok
+      ok
 
       # Encryption de la partition
       SUBTITLE="Chiffrement de la partition"
@@ -292,8 +292,8 @@ partition(){
       # Formattage des partitions
       SUBTITLE="Formattage des partitions"
       echo -n "$SPACE2$SUBTITLE..."
-      mkfs.fat -F32 "$BOOT_PARTITION" #&>/dev/null
-      mkfs.btrfs /dev/mapper/cryptroot #&>/dev/null
+      mkfs.fat -F32 "$BOOT_PARTITION" &>/dev/null
+      mkfs.btrfs /dev/mapper/cryptroot &>/dev/null
       ok
 
       ;;
