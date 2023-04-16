@@ -389,15 +389,15 @@ system_configuration() {
   artix-chroot /mnt locale-gen &>/dev/null
   echo -e "LANG=fr_FR.UTF8" > /mnt/etc/locale.conf
   echo -e "KEYMAP=fr-latin1" > /mnt/etc/vconsole.conf
-  artix-chroot /mnt mkdir -p "/etc/X11/xorg.conf.d/" &>/dev/null
-  cat <<EOT > "/mnt/etc/X11/xorg.conf.d/00-keyboard.conf"
-Section "InputClass"
-  Identifier      "Keyboard Layout"
-  MatchIsKeyboard "yes"
-  Option          "XkbLayout"   "fr"
-  Option          "XkbVariant"  "latin9"
-EndSection
-EOT
+#  artix-chroot /mnt mkdir -p "/etc/X11/xorg.conf.d/" &>/dev/null
+#  cat <<EOT > "/mnt/etc/X11/xorg.conf.d/00-keyboard.conf"
+#Section "InputClass"
+#  Identifier      "Keyboard Layout"
+#  MatchIsKeyboard "yes"
+#  Option          "XkbLayout"   "fr"
+#  Option          "XkbVariant"  "latin9"
+#EndSection
+#EOT
   ok
 
   # Configuration des comptes d'utilisateur
@@ -420,8 +420,8 @@ common_install() {
   SUBTITLE="Classement des miroirs"
   echo -n "$SPACE2$SUBTITLE..."
   MIRROR_LINK="https://gitea.artixlinux.org/packagesA/artix-mirrorlist/raw/branch/master/trunk/mirrorlist"
-  curl -s "$MIRROR_LINK" > /mnt/etc/pacman.d/mirrorlist-artix
-  rankmirrors -n 10 /mnt/etc/pacman.d/mirrorlist-artix > /mnt/etc/pacman.d/mirrorlist
+  #curl -s "$MIRROR_LINK" > /mnt/etc/pacman.d/mirrorlist-artix
+  #rankmirrors -n 10 /mnt/etc/pacman.d/mirrorlist-artix > /mnt/etc/pacman.d/mirrorlist
   ok
 
   # Configuration et mise à jour de pacman
@@ -448,19 +448,19 @@ common_install() {
       GRAPHIC="$GRAPHIC_NVIDIA"
       ;;
   esac
-  artix-chroot /mnt pacman -S --noconfirm --needed "${GRAPHIC[@]}" &>/dev/null
+  artix-chroot /mnt pacman -S --noconfirm --needed "${GRAPHIC[@]}" #&>/dev/null
   ok
 
   # Installation de l'environnement de bureau
   SUBTITLE="Installation de l'environnement de bureau"
   echo -n "$SPACE2$SUBTITLE..."
-  artix-chroot /mnt pacman -S --noconfirm --needed "${WINDOW_MANAGER[@]}" &>/dev/null
+  artix-chroot /mnt pacman -S --noconfirm --needed "${WINDOW_MANAGER[@]}" #&>/dev/null
   ok
 
   # Installation des paquets communs
   SUBTITLE="Installation des paquets communs"
   echo -n "$SPACE2$SUBTITLE..."
-  artix-chroot /mnt pacman -S --noconfirm --needed "${COMMON[@]}" &>/dev/null
+  artix-chroot /mnt pacman -S --noconfirm --needed "${COMMON[@]}" #&>/dev/null
   ok
 
   # Installation d'un assistant AUR
