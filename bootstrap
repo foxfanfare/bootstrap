@@ -61,9 +61,15 @@ deline() {
 BASE=(
   base
   base-devel
-  linux
-#    linux-firmware
+  runit
+  elogind-runit
 )
+
+KERNEL=(
+  linux
+  linux-firmware
+)
+
 
 # Paquets graphiques
 GRAPHIC_INTEL=(
@@ -320,7 +326,7 @@ mount_drives() {
   SUBTITLE="Montage des partitions"
   echo -n "$SPACE2$SUBTITLE..."
   mount /dev/mapper/"$CRYPT_NAME" /mnt &>/dev/null
-  mkdir -p "/mnt/boot" #&>/dev/null
+  mkdir -p "/mnt/boot" &>/dev/null
   mount "$BOOT_PARTITION" /mnt/boot
   ok
 }
@@ -332,8 +338,11 @@ base_install() {
   NUMBER="3"
   title "$TITLE"
   
-  # Initialisation
-  timedatectl &>/dev/null
+  # Mise à jour de l'horlage système
+  SUBTITLE="Mise à jour de l'horloge système"
+  echo -n "$SPACE2$SUBTITLE..."
+  sv up ntpd
+  ok
   
   # Analyse des miroirs
   SUBTITLE="Analyse des miroirs"
@@ -344,7 +353,13 @@ base_install() {
   # Installation des paquets de base
   SUBTITLE="Installation des paquets de base"
   echo -n "$SPACE2$SUBTITLE..."
-  pacstrap -K /mnt "${BASE[@]}" &>/dev/null
+  basestrap /mnt "${BASE[@]}" #&>/dev/null
+  ok
+  
+  # Installation du noyau linux
+  SUBTITLE="Installation du noyau linux"
+  echo -n "$SPACE2$SUBTITLE..."
+  basestrap /mnt "${KERNEL[@]}" #&>/dev/null
   ok
 }
 
@@ -518,7 +533,7 @@ confirm;
 collect_datas;
 detect_system;
 mount_drives;
-#base_install;
+base_install;
 #system_configuration;
 #commom_install;
 #software_configuration;
