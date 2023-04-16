@@ -460,7 +460,7 @@ common_install() {
   # Installation des paquets communs
   SUBTITLE="Installation des paquets communs"
   echo -n "$SPACE2$SUBTITLE..."
-  artix-chroot /mnt pacman -S --noconfirm --needed "${COMMON[@]}" &>/dev/null
+  artix-chroot /mnt pacman -S --noconfirm --needed "${COMMON[@]}" #&>/dev/null
   ok
 
   # Installation d'un assistant AUR
