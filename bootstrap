@@ -61,6 +61,7 @@ deline() {
 BASE=(
   base
   base-devel
+  pacman-contrib
   runit
   elogind-runit
 )
@@ -341,13 +342,8 @@ base_install() {
   # Mise à jour de l'horlage système
   SUBTITLE="Mise à jour de l'horloge système"
   echo -n "$SPACE2$SUBTITLE..."
+  ln -s /etc/runit/sv/ntpd /run/runit/serivce/
   sv up ntpd
-  ok
-  
-  # Analyse des miroirs
-  SUBTITLE="Analyse des miroirs"
-  echo -n "$SPACE2$SUBTITLE..."
-  reflector --country France --age 12 --protocol https --sort rate --save /etc/pacman.d/mirrorlist &>/dev/null
   ok
 
   # Installation des paquets de base
@@ -373,41 +369,41 @@ system_configuration() {
   # Fichier fstab
   SUBTITLE="Configuration du fichier fstab"
   echo -n "$SPACE2$SUBTITLE..."
-  genfstab -U /mnt > /mnt/etc/fstab
+  fstabgen -U /mnt >> /mnt/etc/fstab
   ok
 
   # Fuseau horaire
-  SUBTITLE="Configuration du fuseau horaire"
-  echo -n "$SPACE2$SUBTITLE..."
-  arch-chroot /mnt ln -sf /usr/share/zoneinfo/Europe/Paris /etc/localtime
-  arch-chroot /mnt hwclock --systohc
-  ok
+  #SUBTITLE="Configuration du fuseau horaire"
+  #echo -n "$SPACE2$SUBTITLE..."
+  #arch-chroot /mnt ln -sf /usr/share/zoneinfo/Europe/Paris /etc/localtime
+  #arch-chroot /mnt hwclock --systohc
+  #ok
 
-  # Locales
-  SUBTITLE="Configuration des locales"
-  echo -n "$SPACE2$SUBTITLE..."
-  sed -i 's/#fr_FR.UTF/fr_FR.UTF/' /mnt/etc/locale.gen
-  arch-chroot /mnt locale-gen &>/dev/null
-  echo -e "LANG=fr_FR.UTF8" > /mnt/etc/locale.conf
-  echo -e "KEYMAP=fr-latin1" > /mnt/etc/vconsole.conf
-  arch-chroot /mnt mkdir -p "/etc/X11/xorg.conf.d/" &>/dev/null
-  cat <<EOT > "/mnt/etc/X11/xorg.conf.d/00-keyboard.conf"
-Section "InputClass"
-  Identifier      "Keyboard Layout"
-  MatchIsKeyboard "yes"
-  Option          "XkbLayout"   "fr"
-  Option          "XkbVariant"  "latin9"
-EndSection
-EOT
-  ok
-
-  # Configuration des comptes d'utilisateur
-  SUBTITLE="Configuration des comptes d'utilisateur"
-  echo -n "$SPACE2$SUBTITLE..."
-  arch-chroot /mnt useradd -m -g users -G wheel $USER &>/dev/null
-  printf "%s\n%s" $PASSWORD $PASSWORD | arch-chroot /mnt passwd $USER &>/dev/null
-  sed -i 's/# %wheel ALL=(ALL:ALL) ALL/%wheel ALL=(ALL:ALL) ALL/' /mnt/etc/sudoers
-  ok
+  ## Locales
+  #SUBTITLE="Configuration des locales"
+  #echo -n "$SPACE2$SUBTITLE..."
+  #sed -i 's/#fr_FR.UTF/fr_FR.UTF/' /mnt/etc/locale.gen
+  #arch-chroot /mnt locale-gen &>/dev/null
+  #echo -e "LANG=fr_FR.UTF8" > /mnt/etc/locale.conf
+  #echo -e "KEYMAP=fr-latin1" > /mnt/etc/vconsole.conf
+  #arch-chroot /mnt mkdir -p "/etc/X11/xorg.conf.d/" &>/dev/null
+  #cat <<EOT > "/mnt/etc/X11/xorg.conf.d/00-keyboard.conf"
+#Section "InputClass"
+#  Identifier      "Keyboard Layout"
+#  MatchIsKeyboard "yes"
+#  Option          "XkbLayout"   "fr"
+#  Option          "XkbVariant"  "latin9"
+#EndSection
+#EOT
+#  ok
+#
+#  # Configuration des comptes d'utilisateur
+#  SUBTITLE="Configuration des comptes d'utilisateur"
+#  echo -n "$SPACE2$SUBTITLE..."
+#  arch-chroot /mnt useradd -m -g users -G wheel $USER &>/dev/null
+#  printf "%s\n%s" $PASSWORD $PASSWORD | arch-chroot /mnt passwd $USER &>/dev/null
+#  sed -i 's/# %wheel ALL=(ALL:ALL) ALL/%wheel ALL=(ALL:ALL) ALL/' /mnt/etc/sudoers
+#  ok
 }
 
 # Installation des autres paquets
@@ -416,6 +412,14 @@ commom_install() {
   TITLE="Installation des programmes complémentaires"
   NUMBER="5"
   title "$TITLE"
+
+  # Analyse des miroirs
+  SUBTITLE="Analyse des miroirs"
+  echo -n "$SPACE2$SUBTITLE..."
+  cp /etc/pacman.d/mirrorlist /etc/pacman.d/mirrorlist-artix
+  rankmirrors -n 5 /etc/pacman.d/mirrorlist-artix > /etc/pacman.d/mirrorlist
+  ##reflector --country France --age 12 --protocol https --sort rate --save /etc/pacman.d/mirrorlist &>/dev/null
+  ok
 
   # Configuration et mise à jour de pacman
   SUBTITLE="Configuration et mise à jour de pacman"
