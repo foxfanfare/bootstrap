@@ -83,7 +83,6 @@ COMMON=(
   git
   grub
   lvm2
-  lvm2-runit
   #libedit
   #llvm-libs
   networkmanager
