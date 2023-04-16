@@ -212,43 +212,44 @@ detect_system() {
   # Choisir si le disque doit être partitionné
   SUBTITLE="Analyse des disques"
   echo -n "$SPACE2$SUBTITLE..."
-  if [[ -n "$ROOT_PARTITION" ]]; then
-    echo
-    while true; do
-      read -p "${WARNING}Un système est déjà présent sur le disque. Souhaitez vous le conserver ? [O/n] " CONFIRM;
-      if [[ -z "$CONFIRM" || "$CONFIRM" = [Oo] ]]; then
-        for run in {1..2}; do
-          deline
-        done
-        echo "$OK$SUBTITLE"
-        break
-        else if [[ "$CONFIRM" = [Nn] ]]; then
-          while true; do
-            read -p "${WARNING}Des données importantes risquent d'être effacées. Êtes-vous sûr ? [O/n] " CONFIRM;
-            if [[ -z "$CONFIRM" || "$CONFIRM" = [Oo] ]]; then
-              for run in {1..3}; do
-                deline
-              done
-              echo "$OK$SUBTITLE"
-              partition
-              break
-              else if [[ "$CONFIRM" = [Nn] ]]; then
-                for run in {1..3}; do
-                  deline
-                done
-                echo "$OK$SUBTITLE"
-                break
-              fi
-            fi
-          done
-          break
-        fi
-      fi
-    done
-  else
-    ok
-    partition
-  fi
+  partition
+  #if [[ -n "$ROOT_PARTITION" ]]; then
+  #  echo
+  #  while true; do
+  #    read -p "${WARNING}Un système est déjà présent sur le disque. Souhaitez vous le conserver ? [O/n] " CONFIRM;
+  #    if [[ -z "$CONFIRM" || "$CONFIRM" = [Oo] ]]; then
+  #      for run in {1..2}; do
+  #        deline
+  #      done
+  #      echo "$OK$SUBTITLE"
+  #      break
+  #      else if [[ "$CONFIRM" = [Nn] ]]; then
+  #        while true; do
+  #          read -p "${WARNING}Des données importantes risquent d'être effacées. Êtes-vous sûr ? [O/n] " CONFIRM;
+  #          if [[ -z "$CONFIRM" || "$CONFIRM" = [Oo] ]]; then
+  #            for run in {1..3}; do
+  #              deline
+  #            done
+  #            echo "$OK$SUBTITLE"
+  #            partition
+  #            break
+  #            else if [[ "$CONFIRM" = [Nn] ]]; then
+  #              for run in {1..3}; do
+  #                deline
+  #              done
+  #              echo "$OK$SUBTITLE"
+  #              break
+  #            fi
+  #          fi
+  #        done
+  #        break
+  #      fi
+  #    fi
+  #  done
+  #else
+  #  ok
+  #  partition
+  #fi
 }
 
 # Partitionnement des disques
@@ -277,7 +278,7 @@ partition(){
       ) | fdisk "$DRIVE" &>/dev/null
       BOOT_PARTITION="${DRIVE}1"
       CRYPT_PARTITION="${DRIVE}2"
-      CRYPT_PARTITION_NAME="cryptlvm"
+      CRYPT_PARTITION_NAME="cryptroot"
       ok
 
       # Configuration du chiffrement
@@ -316,11 +317,9 @@ mount_drives() {
   # Montage des partitions
   SUBTITLE="Montage des partitions"
   echo -n "$SPACE2$SUBTITLE..."
-  mount "$CRYPTROOT" /mnt &>/dev/null
+  mount "$CRYPT_PARTITION" /mnt &>/dev/null
   mkdir -p "/mnt/boot" #&>/dev/null
   mount "$BOOT_PARTITION" /mnt/boot
-  #mkdir -p "/mnt/home" &>/dev/null
-  #mount "$HOME_PARTITION" /mnt/home &>/dev/null
   ok
 }
 
@@ -516,7 +515,7 @@ print_title;
 confirm;
 collect_datas;
 detect_system;
-#mount_drives;
+mount_drives;
 #base_install;
 #system_configuration;
 #commom_install;
