@@ -275,7 +275,7 @@ partition(){
         echo "p"       # partition primaire
         echo "1"       # partition 1
         echo           # premier secteur (défaut)
-        echo "+1M"     # +1Mo
+        echo "+512M"   # +512Mo
         echo "y"       # supprime la signature si demandée
         echo "t"       # choisir le type
         echo "4"       # Bios BOOT
