@@ -313,8 +313,8 @@ partition(){
       SUBTITLE="Formattage des partitions"
       echo -n "$SPACE2$SUBTITLE..."
       mkfs.fat -F32 "$BOOT_PARTITION" &>/dev/null
-      mkfs.btrfs "$CRYPT_ROOT" &>/dev/null
-      mkfs.btrfs "$CRYPT_HOME" &>/dev/null
+      mkfs.btrfs "$CRYPT_ROOT" #&>/dev/null
+      mkfs.btrfs "$CRYPT_HOME" #&>/dev/null
       ok
       ;;
     i5-1340P)
@@ -559,9 +559,9 @@ print_title;
 confirm;
 collect_datas;
 detect_system;
-mount_drives;
+#mount_drives;
 #base_install;
 #system_configuration;
 #common_install;
 #software_configuration;
-bootloader;
+#bootloader;
