@@ -521,7 +521,7 @@ bootloader() {
   # Configuration de grub
   SUBTITLE="Configuration de grub"
   echo -n "$SPACE2$SUBTITLE..."
-  CRYPT_UUID=$(lsblk -n -o UUID $CRYPT_PATH/$CRYPT_NAME)
+  CRYPT_UUID=$(lsblk -n -o UUID $CRYPT_PATH/$CRYPT_NAME | awk NR==1)
   ROOT_UUID=$(lsblk -n -o UUID $CRYPT_ROOT)
   HOME_UUID=$(lsblk -n -o UUID $CRYPT_HOME)
   echo "$CRYPT_UUID"
