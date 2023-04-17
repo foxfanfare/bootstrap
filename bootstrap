@@ -527,20 +527,20 @@ bootloader() {
   sed -i "s/loglevel=3 quiet/loglevel=3 quiet cryptdevice=UUID=$CRYPT_UUID:$CRYPT_NAME root=UUID=$ROOT_UUID home=UUID=$HOME_UUID/" /mnt/etc/default/grub
   ok
 
-#  # Installation du bootloader
-  #SUBTITLE="Configuration du bootloader"
-  #echo -n "$SPACE2$SUBTITLE..."
-  #case "$CPU" in
-  #  i5-2410M)
-  #    arch-chroot /mnt grub-install --target=i386-pc --no-floppy --recheck "$DRIVE" #&>/dev/null
-  #    ;;
-  #  i5-1340P)
-  #    ;;
-  #  i5-4570S)
-  #    ;;
-  #esac
-  #arch-chroot /mnt grub-mkconfig -o /boot/grub/grub.cfg &>/dev/null
-  #ok
+  # Installation du bootloader
+  SUBTITLE="Configuration du bootloader"
+  echo -n "$SPACE2$SUBTITLE..."
+  case "$CPU" in
+    i5-2410M)
+      arch-chroot /mnt grub-install --target=i386-pc --no-floppy --recheck "$DRIVE" #&>/dev/null
+      ;;
+    i5-1340P)
+      ;;
+    i5-4570S)
+      ;;
+  esac
+  arch-chroot /mnt grub-mkconfig -o /boot/grub/grub.cfg #&>/dev/null
+  ok
 #  
 #  # Configuration du réseau
 #  SUBTITLE="Configuration du réseau"
