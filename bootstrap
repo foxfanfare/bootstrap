@@ -292,7 +292,7 @@ partition(){
         echo           # dernier secteur (défaut)
         echo "y"       # supprime la signature si demandée
         echo "w"       # écrire la table sur le disque et quitter
-      ) | fdisk "$DRIVE" &>/dev/null
+      ) | fdisk "$DRIVE" #&>/dev/null
       BOOT_PARTITION="${DRIVE}2"
       CRYPT_PARTITION="${DRIVE}3"
       CRYPT_NAME="cryptlvm"
@@ -302,28 +302,28 @@ partition(){
       ok
 
       # Configuration du chiffrement
-      SUBTITLE="Configuration du chiffrement"
-      echo -n "$SPACE2$SUBTITLE..."
-      echo -n "$PASSWORD" | cryptsetup --key-size=512 --key-file=- luksFormat --type luks2 "$CRYPT_PARTITION" &>/dev/null
-      echo -n "$PASSWORD" | cryptsetup --key-file=- open "$CRYPT_PARTITION" "$CRYPT_NAME" &>/dev/null
-      ok
+      #SUBTITLE="Configuration du chiffrement"
+      #echo -n "$SPACE2$SUBTITLE..."
+      #echo -n "$PASSWORD" | cryptsetup --key-size=512 --key-file=- luksFormat --type luks2 "$CRYPT_PARTITION" &>/dev/null
+      #echo -n "$PASSWORD" | cryptsetup --key-file=- open "$CRYPT_PARTITION" "$CRYPT_NAME" &>/dev/null
+      #ok
 
-      # Création des partitions chiffrées
-      SUBTITLE="Création des partitions chiffrées"
-      echo -n "$SPACE2$SUBTITLE..."
-      pvcreate "$CRYPT_PATH/$CRYPT_NAME" &>/dev/null
-      vgcreate vg0 "$CRYPT_PATH/$CRYPT_NAME" &>/dev/null
-      lvcreate -L 6G vg0 -n root &>/dev/null
-      lvcreate -l 100%FREE vg0 -n home &>/dev/null
-      ok
+      ## Création des partitions chiffrées
+      #SUBTITLE="Création des partitions chiffrées"
+      #echo -n "$SPACE2$SUBTITLE..."
+      #pvcreate "$CRYPT_PATH/$CRYPT_NAME" &>/dev/null
+      #vgcreate vg0 "$CRYPT_PATH/$CRYPT_NAME" &>/dev/null
+      #lvcreate -L 6G vg0 -n root &>/dev/null
+      #lvcreate -l 100%FREE vg0 -n home &>/dev/null
+      #ok
 
-      # Formattage des partitions
-      SUBTITLE="Formattage des partitions"
-      echo -n "$SPACE2$SUBTITLE..."
-      mkfs.fat -F32 "$BOOT_PARTITION" &>/dev/null
-      mkfs.btrfs "$CRYPT_ROOT" &>/dev/null
-      mkfs.btrfs "$CRYPT_HOME" &>/dev/null
-      ok
+      ## Formattage des partitions
+      #SUBTITLE="Formattage des partitions"
+      #echo -n "$SPACE2$SUBTITLE..."
+      #mkfs.fat -F32 "$BOOT_PARTITION" &>/dev/null
+      #mkfs.btrfs "$CRYPT_ROOT" &>/dev/null
+      #mkfs.btrfs "$CRYPT_HOME" &>/dev/null
+      #ok
       ;;
     i5-1340P)
       ;;
