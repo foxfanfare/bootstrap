@@ -350,9 +350,9 @@ partition(){
         echo "8e00"    # LVM partition
         echo "w"       # écrire la table sur le disque et quitter
         echo "y"       # confirmation si demandé
-      ) | gdisk "$DRIVE" #&>/dev/null
-      BOOT_PARTITION="${DRIVE}1"
-      CRYPT_PARTITION="${DRIVE}2"
+      ) | gdisk "$DRIVE" &>/dev/null
+      BOOT_PARTITION="${DRIVE}p1"
+      CRYPT_PARTITION="${DRIVE}p2"
       CRYPT_NAME="cryptlvm"
       CRYPT_PATH="/dev/mapper"
       CRYPT_ROOT="$CRYPT_PATH/vg0-root"
