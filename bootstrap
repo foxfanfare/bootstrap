@@ -539,7 +539,7 @@ bootloader() {
   CRYPT_UUID=$(lsblk -n -o UUID $CRYPT_PARTITION | awk 'END{print}')
   ROOT_UUID=$(lsblk -n -o UUID $CRYPT_ROOT)
   HOME_UUID=$(lsblk -n -o UUID $CRYPT_HOME)
-  sed -i "s/GRUB_CMDLINE_LINUX=\"\"/GRUB_CMDLINE_LINUX=\"cryptdevice=UUID=$CRYPT_UUID:$CRYPT_NAME root=$ROOT_UUID\"/" /mnt/etc/default/grub
+  sed -i "s/GRUB_CMDLINE_LINUX=\"\"/GRUB_CMDLINE_LINUX=\"cryptdevice=UUID=$CRYPT_UUID:$CRYPT_NAME root=$ROOT_UUID home=$HOME_UUID\"/" /mnt/etc/default/grub
   case "$CPU" in
     i5-2410M)
       arch-chroot /mnt grub-install --target=i386-pc --no-floppy --recheck "$DRIVE" &>/dev/null
