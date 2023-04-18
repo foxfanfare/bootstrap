@@ -604,7 +604,7 @@ bootloader() {
       arch-chroot /mnt grub-install --target=i386-pc --no-floppy --recheck "$DRIVE" &>/dev/null
       ;;
     "SILENCIO-3700X")
-      sed -i "s/splash\"/splash amdgpu.dc=1\"/" /mnt/etc/default/grub
+      sed -i "s/splash\"/splash amdgpu.dc=0\"/" /mnt/etc/default/grub
       arch-chroot /mnt grub-install --target=x86_64-efi --efi-directory=/boot --bootloader-id=GRUB &>/dev/null
       ;;
   esac
