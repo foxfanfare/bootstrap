@@ -420,8 +420,10 @@ system_configuration() {
   echo -n "$SPACE2$SUBTITLE..."
   arch-chroot /mnt useradd -m -g users -G wheel $USER &>/dev/null
   printf "%s\n%s" $PASSWORD $PASSWORD | arch-chroot /mnt passwd $USER &>/dev/null
-  #sed -i 's/# %wheel ALL=(ALL:ALL) ALL/%wheel ALL=(ALL:ALL) ALL/' /mnt/etc/sudoers
+  # Désactive le mot de passe pour la suite du script
   sed -i 's/# %wheel ALL=(ALL:ALL) NOPASSWD: ALL/%wheel ALL=(ALL:ALL) NOPASSWD: ALL/' /mnt/etc/sudoers
+  # Ajout de l'autologin après la décryption du disque
+  sed -i "s/--noclear/--noclear --autologin ${USER}/" /mnt/etc/sudoers
   ok
 }
 
@@ -525,11 +527,11 @@ bootloader() {
   title "$TITLE"
 
   # Configuration de mkinitcpio
-#  SUBTITLE="Configuration de mkinitcpio"
-#  echo -n "$SPACE2$SUBTITLE..."
-#  sed -i "s/block filesystems fsck)/block encrypt lvm2 filesystems fsck)/" /mnt/etc/mkinitcpio.conf &>/dev/null 
-#  arch-chroot /mnt mkinitcpio -P &>/dev/null
-#  ok
+  SUBTITLE="Configuration de mkinitcpio"
+  echo -n "$SPACE2$SUBTITLE..."
+  sed -i "s/block filesystems fsck)/block encrypt lvm2 filesystems fsck)/" /mnt/etc/mkinitcpio.conf &>/dev/null 
+  arch-chroot /mnt mkinitcpio -P &>/dev/null
+  ok
 
   # Configuration du bootloader
   SUBTITLE="Configuration du bootloader"
@@ -562,13 +564,11 @@ EOT
   arch-chroot /mnt systemctl enable NetworkManager.service &>/dev/null
   ok
 
-  # Configuration des comptes d'utilisateur
-  SUBTITLE="Configuration des comptes d'utilisateur"
+  # Finalisation de l'installation
+  SUBTITLE="Finalisation de l'installation"
   # Réactive le mot de passe pour sudo
   sed -i "s/# %wheel ALL=(ALL:ALL) ALL/%wheel ALL=(ALL:ALL) ALL/" /mnt/etc/sudoers
   sed -i "s/%wheel ALL=(ALL:ALL) NOPASSWD: ALL/# %wheel ALL=(ALL:ALL) NOPASSWD: ALL/" /mnt/etc/sudoers
-  # Ajout de l'autologin après la décryption du disque
-  sed -i "s/--noclear/--noclear --autologin ${USER}/" /mnt/etc/sudoers
   ok
 }
 
