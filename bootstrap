@@ -423,7 +423,7 @@ system_configuration() {
   # Désactive le mot de passe pour la suite du script
   sed -i 's/# %wheel ALL=(ALL:ALL) NOPASSWD: ALL/%wheel ALL=(ALL:ALL) NOPASSWD: ALL/' /mnt/etc/sudoers
   # Ajout de l'autologin après la décryption du disque
-  #sed -i "s/--noclear/--noclear --autologin ${USER}/" /mnt/etc/sudoers
+  sed -i "s/--noclear/--noclear --autologin $USER/" /mnt/etc/systemd/system/getty.target.wants/getty@tty1.service
   ok
 }
 
