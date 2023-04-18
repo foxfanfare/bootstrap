@@ -544,7 +544,7 @@ bootloader() {
     i5-4570S)
       ;;
   esac
-  arch-chroot /mnt grub-mkconfig -o /boot/grub/grub.cfg #&>/dev/null
+  arch-chroot /mnt grub-mkconfig -o /boot/grub/grub.cfg &>/dev/null
   ok
   
   # Configuration du réseau
@@ -565,7 +565,7 @@ EOT
   sed -i "s/# %wheel ALL=(ALL:ALL) ALL/%wheel ALL=(ALL:ALL) ALL/" /mnt/etc/sudoers
   sed -i "s/%wheel ALL=(ALL:ALL) NOPASSWD: ALL/# %wheel ALL=(ALL:ALL) NOPASSWD: ALL/" /mnt/etc/sudoers
   # Ajout de l'autologin après la décryption du disque
-  sed -i "s/--noclear/--noclear --autologin ${USER}/" /mnt/etc/sudoers
+  #sed -i "s/--noclear/--noclear --autologin ${USER}/" /mnt/etc/sudoers
   ok
 }
 
