@@ -7,7 +7,7 @@
 # ------------------------------------------------
 # INSTALLATION
 # ------------------------------------------------
-# Dans le cadre de SILENCIO-4570S, au lancement de l'installateur,
+# Dans le cadre de SILENCIO, au lancement de l'installateur,
 # presser 'e' pour éditer 'Arch Linux install medium (x86_64, UEFI)'.
 # À la fin de la ligne commencant par 'linux' et juste avant celle
 # commencant par 'initrd', ajouter 'nomodeset' à la fin.
@@ -349,7 +349,7 @@ partition(){
         echo           # dernier secteur (défaut)
         echo "8e00"    # LVM partition
         echo "w"       # écrire la table sur le disque et quitter
-      ) | gdisk "$DRIVE" &>/dev/null
+      ) | gdisk "$DRIVE" #&>/dev/null
       BOOT_PARTITION="${DRIVE}1"
       CRYPT_PARTITION="${DRIVE}2"
       CRYPT_NAME="cryptlvm"
