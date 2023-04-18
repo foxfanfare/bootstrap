@@ -153,6 +153,7 @@ print_title() {
 confirm() {
   # Nom du CPU
   CPU=$(cat /proc/cpuinfo | grep name | awk 'NR==1{print}' | grep -o '[^ ]* CPU' | sed  's/ CPU//')
+  echo "$CPU"
 
   # Nom de l'ordinateur
   case "$CPU" in
