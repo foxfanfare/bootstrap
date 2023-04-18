@@ -39,10 +39,10 @@ BLUE=$(tput setaf 4)
 MAGENTA=$(tput setaf 5)
 CYAN=$(tput setaf 6)
 SPACE1=" :: "
-SPACE2="  ${BOLD}${YELLOW}==>${NORMAL}  "
+SPACE2="  $BOLD$YELLOW==>$NORMAL  "
 SPACE3="       "
 OK=" [${GREEN}OK${NORMAL}] "
-WARNING="  ${RED}/!\\${NORMAL} "
+WARNING="  $RED$BOLD/!\\$NORMAL "
 title() {
   echo
   echo " $BOLD[$NUMBER/7] $1$NORMAL"
