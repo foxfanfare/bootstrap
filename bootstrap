@@ -588,25 +588,25 @@ bootloader() {
   SUBTITLE="Configuration de mkinitcpio"
   echo -n "$SPACE2$SUBTITLE..."
   sed -i "s/block filesystems fsck)/block encrypt lvm2 filesystems fsck)/" /mnt/etc/mkinitcpio.conf &>/dev/null 
-  arch-chroot /mnt mkinitcpio -P #&>/dev/null
+  arch-chroot /mnt mkinitcpio -P &>/dev/null
   ok
 
-#  # Configuration du bootloader
-#  SUBTITLE="Configuration du bootloader"
-#  echo -n "$SPACE2$SUBTITLE..."
-#  CRYPT_UUID=$(lsblk -n -o UUID $CRYPT_PARTITION | awk 'END{print}')
-#  ROOT_UUID=$(lsblk -n -o UUID $CRYPT_ROOT)
-#  sed -i "s/GRUB_CMDLINE_LINUX=\"\"/GRUB_CMDLINE_LINUX=\"cryptdevice=UUID=$CRYPT_UUID:$CRYPT_NAME root=UUID=$ROOT_UUID\"/" /mnt/etc/default/grub
-#  case "$CPU" in
-#    "HP-DV7")
-#      arch-chroot /mnt grub-install --target=i386-pc --no-floppy --recheck "$DRIVE" &>/dev/null
-#      ;;
-#    "SILENCIO-3700X")
-#      arch-chroot /mnt grub-install --target=x86_64-efi --efi-directory=/boot --bootloader-id=GRUB #&>/dev/null
-#      ;;
-#  esac
-#  arch-chroot /mnt grub-mkconfig -o /boot/grub/grub.cfg &>/dev/null
-#  ok
+  # Configuration du bootloader
+  SUBTITLE="Configuration du bootloader"
+  echo -n "$SPACE2$SUBTITLE..."
+  CRYPT_UUID=$(lsblk -n -o UUID $CRYPT_PARTITION | awk 'END{print}')
+  ROOT_UUID=$(lsblk -n -o UUID $CRYPT_ROOT)
+  sed -i "s/GRUB_CMDLINE_LINUX=\"\"/GRUB_CMDLINE_LINUX=\"cryptdevice=UUID=$CRYPT_UUID:$CRYPT_NAME root=UUID=$ROOT_UUID\"/" /mnt/etc/default/grub
+  case "$CPU" in
+    "HP-DV7")
+      arch-chroot /mnt grub-install --target=i386-pc --no-floppy --recheck "$DRIVE" &>/dev/null
+      ;;
+    "SILENCIO-3700X")
+      arch-chroot /mnt grub-install --target=x86_64-efi --efi-directory=/boot --bootloader-id=GRUB #&>/dev/null
+      ;;
+  esac
+  arch-chroot /mnt grub-mkconfig -o /boot/grub/grub.cfg &>/dev/null
+  ok
 #  
 #  # Configuration du réseau
 #  SUBTITLE="Configuration du réseau"
