@@ -152,14 +152,14 @@ print_title() {
 # ------------------------------------------------
 confirm() {
   # Nom du CPU
-  CPU=$(cat /proc/cpuinfo | grep name | awk 'NR==1{print}' | grep -o '[^ ]* CPU' | sed  's/ CPU//')
+  CPU=$(cat /proc/cpuinfo | grep name | awk 'NR==1{print}' | sed "s/model name : //")
   echo "$CPU"
 
   # Nom de l'ordinateur
   case "$CPU" in
-    i5-2410M) PROFILE="HP-DV7";;
-    i5-1340P) PROFILE="FRAMEWORK";;
-    i5-4570S) PROFILE="SILENCIO";;
+    "Intel(R) Core(TM) i5-2410M CPU @ 2.30GHz") PROFILE="HP-DV7";;
+    "") PROFILE="FRAMEWORK";;
+    "AMD Ryzen 7 3700X 8-Core Processor") PROFILE="SILENCIO";;
     *) PROFILE="";;
   esac
 
