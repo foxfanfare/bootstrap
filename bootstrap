@@ -282,14 +282,14 @@ partition(){
         echo "n"       # ajouter une nouvelle partition
         echo "1"       # partition 1
         echo           # premier secteur (défaut)
-        echo "+2M"     # +2Mo
+        echo "+2M"     # +2 Mo
         echo "y"       # supprime la signature si demandée
         echo "t"       # choisir le type
         echo "4"       # Bios BOOT
         echo "n"       # ajouter une nouvelle partition
         echo "2"       # partition 2
         echo           # premier secteur (défaut)
-        echo "+512M"   # +512Mo
+        echo "+512M"   # +512 Mo
         echo "y"       # supprime la signature si demandée
         echo "n"       # ajouter une nouvelle partition
         echo "3"       # partition 2
@@ -341,7 +341,7 @@ partition(){
         echo "n"       # ajouter une nouvelle partition
         echo "1"       # partition 1
         echo           # premier secteur (défaut)
-        echo "+200M"   # +200Mo
+        echo "+512M"   # +512 Mo
         echo "ef00"    # UEFI partition
         echo "n"       # ajouter une nouvelle partition
         echo "2"       # partition 2
@@ -359,29 +359,29 @@ partition(){
       CRYPT_HOME="$CRYPT_PATH/vg0-home"
       ok
 
-      ## Configuration du chiffrement
-      #SUBTITLE="Configuration du chiffrement"
-      #echo -n "$SPACE2$SUBTITLE..."
-      #echo -n "$PASSWORD" | cryptsetup --key-size=512 --key-file=- luksFormat --type luks2 "$CRYPT_PARTITION" &>/dev/null
-      #echo -n "$PASSWORD" | cryptsetup --key-file=- open "$CRYPT_PARTITION" "$CRYPT_NAME" &>/dev/null
-      #ok
+      # Configuration du chiffrement
+      SUBTITLE="Configuration du chiffrement"
+      echo -n "$SPACE2$SUBTITLE..."
+      echo -n "$PASSWORD" | cryptsetup --key-size=512 --key-file=- luksFormat --type luks2 "$CRYPT_PARTITION" &>/dev/null
+      echo -n "$PASSWORD" | cryptsetup --key-file=- open "$CRYPT_PARTITION" "$CRYPT_NAME" &>/dev/null
+      ok
 
-      ## Création des partitions chiffrées
-      #SUBTITLE="Création des partitions chiffrées"
-      #echo -n "$SPACE2$SUBTITLE..."
-      #pvcreate "$CRYPT_PATH/$CRYPT_NAME" &>/dev/null
-      #vgcreate vg0 "$CRYPT_PATH/$CRYPT_NAME" &>/dev/null
-      #lvcreate -L 6G vg0 -n root &>/dev/null
-      #lvcreate -l 100%FREE vg0 -n home &>/dev/null
-      #ok
+      # Création des partitions chiffrées
+      SUBTITLE="Création des partitions chiffrées"
+      echo -n "$SPACE2$SUBTITLE..."
+      pvcreate "$CRYPT_PATH/$CRYPT_NAME" &>/dev/null
+      vgcreate vg0 "$CRYPT_PATH/$CRYPT_NAME" &>/dev/null
+      lvcreate -L 6G vg0 -n root &>/dev/null
+      lvcreate -l 100%FREE vg0 -n home &>/dev/null
+      ok
 
-      ## Formattage des partitions
-      #SUBTITLE="Formattage des partitions"
-      #echo -n "$SPACE2$SUBTITLE..."
-      #mkfs.fat -F32 "$BOOT_PARTITION" &>/dev/null
-      #mkfs.btrfs "$CRYPT_ROOT" &>/dev/null
-      #mkfs.btrfs "$CRYPT_HOME" &>/dev/null
-      #ok
+      # Formattage des partitions
+      SUBTITLE="Formattage des partitions"
+      echo -n "$SPACE2$SUBTITLE..."
+      mkfs.fat -F32 "$BOOT_PARTITION" &>/dev/null
+      mkfs.btrfs "$CRYPT_ROOT" &>/dev/null
+      mkfs.btrfs "$CRYPT_HOME" &>/dev/null
+      ok
       ;;
   esac
 }
