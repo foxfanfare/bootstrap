@@ -75,8 +75,8 @@ INTEL=(
 )
 
 AMD=(
-  #xf86-video-amdgpu
   mesa
+  xf86-video-amdgpu
 )
 
 # Paquets communs
@@ -537,19 +537,19 @@ common_install() {
   esac
   ok
 
-#  # Installation d'un assistant AUR
-#  SUBTITLE="Installation d'un assistant AUR"
-#  echo -n "$SPACE2$SUBTITLE..."
-#  arch-chroot /mnt &>/dev/null <<EOF
-#su $USER
-#cd /home/$USER
-#git clone -q https://aur.archlinux.org/paru.git
-#cd paru
-#makepkg --noconfirm -si
-#cd ..
-#rm -rd paru
-#EOF
-#  ok
+  # Installation d'un assistant AUR
+  SUBTITLE="Installation d'un assistant AUR"
+  echo -n "$SPACE2$SUBTITLE..."
+  arch-chroot /mnt &>/dev/null <<EOF
+su $USER
+cd /home/$USER
+git clone -q https://aur.archlinux.org/paru.git
+cd paru
+makepkg --noconfirm -si
+cd ..
+rm -rd paru
+EOF
+  ok
 }
 
 # Configuration des programmes
@@ -603,7 +603,7 @@ bootloader() {
       arch-chroot /mnt grub-install --target=i386-pc --no-floppy --recheck "$DRIVE" &>/dev/null
       ;;
     "SILENCIO-3700X")
-      sed -i "s/\"loglevel=3 quiet\"/\"loglevel=3 quiet amdgpu.dc=0\"/" /mnt/etc/default/grub
+      sed -i "s/\"loglevel=3 quiet\"/\"loglevel=3 quiet amdgpu.dc=1\"/" /mnt/etc/default/grub
       arch-chroot /mnt grub-install --target=x86_64-efi --efi-directory=/boot --bootloader-id=GRUB &>/dev/null
       ;;
   esac
@@ -627,7 +627,9 @@ EOT
   # Réactive le mot de passe pour sudo
   sed -i "s/# %wheel ALL=(ALL:ALL) ALL/%wheel ALL=(ALL:ALL) ALL/" /mnt/etc/sudoers
   sed -i "s/%wheel ALL=(ALL:ALL) NOPASSWD: ALL/# %wheel ALL=(ALL:ALL) NOPASSWD: ALL/" /mnt/etc/sudoers
+  umount -R /mnt
   ok
+  reboot
 }
 
 # Exécution du script
