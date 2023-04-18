@@ -602,30 +602,30 @@ bootloader() {
       arch-chroot /mnt grub-install --target=i386-pc --no-floppy --recheck "$DRIVE" &>/dev/null
       ;;
     "SILENCIO-3700X")
-      arch-chroot /mnt grub-install --target=x86_64-efi --efi-directory=/boot --bootloader-id=GRUB #&>/dev/null
+      arch-chroot /mnt grub-install --target=x86_64-efi --efi-directory=/boot --bootloader-id=GRUB &>/dev/null
       ;;
   esac
   arch-chroot /mnt grub-mkconfig -o /boot/grub/grub.cfg &>/dev/null
   ok
-#  
-#  # Configuration du réseau
-#  SUBTITLE="Configuration du réseau"
-#  echo -n "$SPACE2$SUBTITLE..."
-#  echo "$PROFILE" > /mnt/etc/hostname
-#  cat <<EOT > "/mnt/etc/hosts"
-#127.0.0.1   localhost
-#::1         localhost
-#127.0.1.1   "$PROFILE".localdomain  "$PROFILE"
-#EOT
-#  arch-chroot /mnt systemctl enable NetworkManager.service &>/dev/null
-#  ok
-#
-#  # Finalisation de l'installation
-#  SUBTITLE="Finalisation de l'installation"
-#  # Réactive le mot de passe pour sudo
-#  sed -i "s/# %wheel ALL=(ALL:ALL) ALL/%wheel ALL=(ALL:ALL) ALL/" /mnt/etc/sudoers
-#  sed -i "s/%wheel ALL=(ALL:ALL) NOPASSWD: ALL/# %wheel ALL=(ALL:ALL) NOPASSWD: ALL/" /mnt/etc/sudoers
-#  ok
+  
+  # Configuration du réseau
+  SUBTITLE="Configuration du réseau"
+  echo -n "$SPACE2$SUBTITLE..."
+  echo "$PROFILE" > /mnt/etc/hostname
+  cat <<EOT > "/mnt/etc/hosts"
+127.0.0.1   localhost
+::1         localhost
+127.0.1.1   "$PROFILE".localdomain  "$PROFILE"
+EOT
+  arch-chroot /mnt systemctl enable NetworkManager.service &>/dev/null
+  ok
+
+  # Finalisation de l'installation
+  SUBTITLE="Finalisation de l'installation"
+  # Réactive le mot de passe pour sudo
+  sed -i "s/# %wheel ALL=(ALL:ALL) ALL/%wheel ALL=(ALL:ALL) ALL/" /mnt/etc/sudoers
+  sed -i "s/%wheel ALL=(ALL:ALL) NOPASSWD: ALL/# %wheel ALL=(ALL:ALL) NOPASSWD: ALL/" /mnt/etc/sudoers
+  ok
 }
 
 # Exécution du script
