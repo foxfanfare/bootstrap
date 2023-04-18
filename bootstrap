@@ -353,7 +353,7 @@ base_install() {
   # Mise à jour de l'horlage système
   SUBTITLE="Mise à jour de l'horloge système"
   echo -n "$SPACE2$SUBTITLE..."
-  timedatectl &>/dev/null
+  timedatectl set-ntp true
   ok
 
   # Installation des paquets de base
@@ -526,10 +526,10 @@ bootloader() {
   # Configuration de grub
   SUBTITLE="Configuration de grub"
   echo -n "$SPACE2$SUBTITLE..."
-  CRYPT_UUID=$(lsblk -n -o UUID $CRYPT_PATH/$CRYPT_NAME | awk NR==1)
+  CRYPT_UUID=$(lsblk -n -o UUID $CRYPT_PARTITION | awk 'END{print}')
   ROOT_UUID=$(lsblk -n -o UUID $CRYPT_ROOT)
   HOME_UUID=$(lsblk -n -o UUID $CRYPT_HOME)
-  sed -i "s/loglevel=3 quiet/loglevel=3 quiet cryptdevice=UUID=$CRYPT_UUID:$CRYPT_NAME root=UUID=$ROOT_UUID home=UUID=$HOME_UUID/" /mnt/etc/default/grub
+  sed -i "s/GRUB_CMDLINE_LINUX=\"\"/GRUB_CMDLINE_LINUX=\"cryptdevice=UUID=$CRYPT_UUID:$CRYPT_NAME root=UUID=$ROOT_UUID home=UUID=$HOME_UUID\"/" /mnt/etc/default/grub
   ok
 
   # Configuration du bootloader
@@ -537,14 +537,14 @@ bootloader() {
   echo -n "$SPACE2$SUBTITLE..."
   case "$CPU" in
     i5-2410M)
-      arch-chroot /mnt grub-install --target=i386-pc --no-floppy --recheck "$DRIVE" &>/dev/null
+      arch-chroot /mnt grub-install --target=i386-pc --no-floppy --recheck "$DRIVE" #&>/dev/null
       ;;
     i5-1340P)
       ;;
     i5-4570S)
       ;;
   esac
-  arch-chroot /mnt grub-mkconfig -o /boot/grub/grub.cfg &>/dev/null
+  arch-chroot /mnt grub-mkconfig -o /boot/grub/grub.cfg #&>/dev/null
   ok
   
   # Configuration du réseau
