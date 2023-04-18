@@ -424,6 +424,11 @@ system_configuration() {
   sed -i 's/# %wheel ALL=(ALL:ALL) NOPASSWD: ALL/%wheel ALL=(ALL:ALL) NOPASSWD: ALL/' /mnt/etc/sudoers
   # Ajout de l'autologin après la décryption du disque
   #sed -i "s/--noclear/--autologin $USER --noclear/" /mnt/etc/systemd/system/getty.target.wants/getty@tty1.service
+  cat <<EOT > "/mnt/etc/systemd/system/getty@tty1.service.d/autologin.conf"
+[Service]
+ExecStart=
+ExecStart=-/sbin/agetty -o '-p -f -- \\u' --noclear --autologin $USER %I $TERM
+EOT
   ok
 }
 
