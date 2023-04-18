@@ -289,7 +289,7 @@ partition(){
         echo           # dernier secteur (défaut)
         echo "y"       # supprime la signature si demandée
         echo "w"       # écrire la table sur le disque et quitter
-      ) | fdisk "$DRIVE" #&>/dev/null
+      ) | fdisk "$DRIVE" &>/dev/null
       BOOT_PARTITION="${DRIVE}2"
       CRYPT_PARTITION="${DRIVE}3"
       CRYPT_NAME="cryptlvm"
@@ -576,8 +576,8 @@ confirm;
 collect_datas;
 detect_system;
 mount_drives;
-#base_install;
-#system_configuration;
-#common_install;
-#software_configuration;
-#bootloader;
+base_install;
+system_configuration;
+common_install;
+software_configuration;
+bootloader;
