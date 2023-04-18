@@ -153,7 +153,6 @@ print_title() {
 confirm() {
   # Nom du CPU
   CPU=$(cat /proc/cpuinfo | grep name | awk 'NR==1{print}' | sed "s/model name	: //")
-  echo "$CPU"
 
   # Nom de l'ordinateur
   case "$CPU" in
@@ -272,8 +271,8 @@ detect_system() {
 # ------------------------------------------------
 partition(){
   # Gestion des disques selon le profil d'installation
-  case "$CPU" in
-    i5-2410M)
+  case "$PROFILE" in
+    "HP-DV7")
       # Partitionnement des disques
       SUBTITLE="Partitionnement des disques"
       echo -n "$SPACE2$SUBTITLE..."
@@ -331,9 +330,7 @@ partition(){
       mkfs.btrfs "$CRYPT_HOME" &>/dev/null
       ok
       ;;
-    i5-1340P)
-      ;;
-    i5-4570S)
+    "SILENCIO")
       # Partitionnement des disques
       SUBTITLE="Partitionnement des disques"
       echo -n "$SPACE2$SUBTITLE..."
