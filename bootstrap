@@ -423,7 +423,7 @@ system_configuration() {
   # Désactive le mot de passe pour la suite du script
   sed -i 's/# %wheel ALL=(ALL:ALL) NOPASSWD: ALL/%wheel ALL=(ALL:ALL) NOPASSWD: ALL/' /mnt/etc/sudoers
   # Ajout de l'autologin après la décryption du disque
-  #sed -i "s/--noclear/--noclear --autologin $USER/" /mnt/etc/systemd/system/getty.target.wants/getty@tty1.service
+  #sed -i "s/--noclear/--autologin $USER --noclear/" /mnt/etc/systemd/system/getty.target.wants/getty@tty1.service
   ok
 }
 
@@ -479,19 +479,19 @@ common_install() {
   arch-chroot /mnt pacman -S --noconfirm --needed "${COMMON[@]}" &>/dev/null
   ok
 
-  # Installation d'un assistant AUR
-  SUBTITLE="Installation d'un assistant AUR"
-  echo -n "$SPACE2$SUBTITLE..."
-  arch-chroot /mnt &>/dev/null <<EOF
-su $USER
-cd /home/$USER
-git clone -q https://aur.archlinux.org/paru.git
-cd paru
-makepkg --noconfirm -si
-cd ..
-rm -rd paru
-EOF
-  ok
+#  # Installation d'un assistant AUR
+#  SUBTITLE="Installation d'un assistant AUR"
+#  echo -n "$SPACE2$SUBTITLE..."
+#  arch-chroot /mnt &>/dev/null <<EOF
+#su $USER
+#cd /home/$USER
+#git clone -q https://aur.archlinux.org/paru.git
+#cd paru
+#makepkg --noconfirm -si
+#cd ..
+#rm -rd paru
+#EOF
+#  ok
 }
 
 # Configuration des programmes
