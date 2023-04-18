@@ -7,7 +7,7 @@
 # ------------------------------------------------
 # INSTALLATION
 # ------------------------------------------------
-# Dans le cadre de SILENCIO, au lancement de l'installateur,
+# Dans le cadre de SILENCIO-3700X, au lancement de l'installateur,
 # presser 'e' pour éditer 'Arch Linux install medium (x86_64, UEFI)'.
 # À la fin de la ligne commencant par 'linux' et juste avant celle
 # commencant par 'initrd', ajouter 'nomodeset' à la fin.
@@ -75,13 +75,8 @@ INTEL=(
 )
 
 AMD=(
-  xf86-video-amdgpu
-)
-
-NVIDIA=(
-  nvidia
-  nvidia-settings
-  nvidia-utils
+  #xf86-video-amdgpu
+  mesa
 )
 
 # Paquets communs
@@ -101,6 +96,14 @@ COMMON=(
   zsh-autosuggestions
   zsh-completions
   zsh-theme-powerlevel10k
+)
+
+# Paquets spécifiques
+HP=(
+)
+
+SILENCIO=(
+  efibootmgr
 )
 
 # Paquets environnement de bureau
@@ -158,7 +161,7 @@ confirm() {
   case "$CPU" in
     "Intel(R) Core(TM) i5-2410M CPU @ 2.30GHz") PROFILE="HP-DV7";;
     "à voir") PROFILE="FRAMEWORK";;
-    "AMD Ryzen 7 3700X 8-Core Processor") PROFILE="SILENCIO";;
+    "AMD Ryzen 7 3700X 8-Core Processor") PROFILE="SILENCIO-3700X";;
     *) PROFILE="";;
   esac
 
@@ -330,7 +333,7 @@ partition(){
       mkfs.btrfs "$CRYPT_HOME" &>/dev/null
       ok
       ;;
-    "SILENCIO")
+    "SILENCIO-3700X")
       # Partitionnement des disques
       SUBTITLE="Partitionnement des disques"
       echo -n "$SPACE2$SUBTITLE..."
@@ -498,15 +501,12 @@ common_install() {
   # Installation des paquets communs
   SUBTITLE="Installation des drivers graphiques"
   echo -n "$SPACE2$SUBTITLE..."
-  case "$CPU" in
-    i5-2410M)
+  case "$PROFILE" in
+    "HP-DV7")
       GRAPHIC="$INTEL"
       ;;
-    i5-1340P)
-      GRAPHIC="$INTEL"
-      ;;
-    i5-4570S)
-      GRAPHIC="$NVIDIA"
+    "SILENCIO-3700X")
+      GRAPHIC="$AMD"
       ;;
   esac
   arch-chroot /mnt pacman -S --noconfirm --needed "${GRAPHIC[@]}" &>/dev/null
@@ -524,19 +524,34 @@ common_install() {
   arch-chroot /mnt pacman -S --noconfirm --needed "${COMMON[@]}" &>/dev/null
   ok
 
-#  # Installation d'un assistant AUR
-#  SUBTITLE="Installation d'un assistant AUR"
-#  echo -n "$SPACE2$SUBTITLE..."
-#  arch-chroot /mnt &>/dev/null <<EOF
-#su $USER
-#cd /home/$USER
-#git clone -q https://aur.archlinux.org/paru.git
-#cd paru
-#makepkg --noconfirm -si
-#cd ..
-#rm -rd paru
-#EOF
-#  ok
+  # Installation des paquets spécifiques
+  SUBTITLE="Installation des paquets spécifiques"
+  echo -n "$SPACE2$SUBTITLE..."
+  case "$PROFILE" in
+    "HP-DV7")
+      arch-chroot /mnt pacman -S --noconfirm --needed "${HP[@]}" &>/dev/null
+      ;;
+    "SILENCIO-3700X")
+      arch-chroot /mnt pacman -S --noconfirm --needed "${SILENCIO[@]}" &>/dev/null
+      ;;
+  esac
+
+
+  ok
+
+  # Installation d'un assistant AUR
+  SUBTITLE="Installation d'un assistant AUR"
+  echo -n "$SPACE2$SUBTITLE..."
+  arch-chroot /mnt &>/dev/null <<EOF
+su $USER
+cd /home/$USER
+git clone -q https://aur.archlinux.org/paru.git
+cd paru
+makepkg --noconfirm -si
+cd ..
+rm -rd paru
+EOF
+  ok
 }
 
 # Configuration des programmes
@@ -583,16 +598,13 @@ bootloader() {
   echo -n "$SPACE2$SUBTITLE..."
   CRYPT_UUID=$(lsblk -n -o UUID $CRYPT_PARTITION | awk 'END{print}')
   ROOT_UUID=$(lsblk -n -o UUID $CRYPT_ROOT)
-  HOME_UUID=$(lsblk -n -o UUID $CRYPT_HOME)
-  #sed -i "s/\"loglevel=3 quiet\"/\"loglevel=3 quiet cryptdevice=UUID=$CRYPT_UUID:$CRYPT_NAME root=$ROOT_UUID home=$HOME_UUID\"/" /mnt/etc/default/grub
   sed -i "s/GRUB_CMDLINE_LINUX=\"\"/GRUB_CMDLINE_LINUX=\"cryptdevice=UUID=$CRYPT_UUID:$CRYPT_NAME root=UUID=$ROOT_UUID\"/" /mnt/etc/default/grub
   case "$CPU" in
-    i5-2410M)
+    "HP-DV7")
       arch-chroot /mnt grub-install --target=i386-pc --no-floppy --recheck "$DRIVE" &>/dev/null
       ;;
-    i5-1340P)
-      ;;
-    i5-4570S)
+    "SILENCIO-3700X")
+      arch-chroot /mnt grub-install --target=x86_64-efi --efi-directory=/boot/efi --bootloader-id=GRUB #&>/dev/null
       ;;
   esac
   arch-chroot /mnt grub-mkconfig -o /boot/grub/grub.cfg &>/dev/null
@@ -624,9 +636,9 @@ print_title;
 confirm;
 collect_datas;
 detect_system;
-#mount_drives;
-#base_install;
-#system_configuration;
-#common_install;
-#software_configuration;
-#bootloader;
+mount_drives;
+base_install;
+system_configuration;
+common_install;
+software_configuration;
+bootloader;
