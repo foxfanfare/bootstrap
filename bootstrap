@@ -69,11 +69,19 @@ KERNEL=(
 )
 
 # Paquets graphiques
-GRAPHIC_INTEL=(
+INTEL=(
   mesa
+  xf86-video-intel
 )
 
-GRAPHIC_AMD=(
+AMD=(
+  xf86-video-amdgpu
+)
+
+NVIDIA=(
+  nvidia
+  nvidia-settings
+  nvidia-utils
 )
 
 # Paquets communs
@@ -445,13 +453,13 @@ common_install() {
   echo -n "$SPACE2$SUBTITLE..."
   case "$CPU" in
     i5-2410M)
-      GRAPHIC="$GRAPHIC_INTEL"
+      GRAPHIC="$INTEL"
       ;;
     i5-1340P)
-      GRAPHIC="$GRAPHIC_INTEL"
+      GRAPHIC="$INTEL"
       ;;
     i5-4570S)
-      GRAPHIC="$GRAPHIC_NVIDIA"
+      GRAPHIC="$NVIDIA"
       ;;
   esac
   arch-chroot /mnt pacman -S --noconfirm --needed "${GRAPHIC[@]}" &>/dev/null
@@ -517,11 +525,11 @@ bootloader() {
   title "$TITLE"
 
   # Configuration de mkinitcpio
-  SUBTITLE="Configuration de mkinitcpio"
-  echo -n "$SPACE2$SUBTITLE..."
-  sed -i "s/block filesystems fsck)/block encrypt lvm2 filesystems fsck)/" /mnt/etc/mkinitcpio.conf &>/dev/null 
-  arch-chroot /mnt mkinitcpio -P &>/dev/null
-  ok
+#  SUBTITLE="Configuration de mkinitcpio"
+#  echo -n "$SPACE2$SUBTITLE..."
+#  sed -i "s/block filesystems fsck)/block encrypt lvm2 filesystems fsck)/" /mnt/etc/mkinitcpio.conf &>/dev/null 
+#  arch-chroot /mnt mkinitcpio -P &>/dev/null
+#  ok
 
   # Configuration du bootloader
   SUBTITLE="Configuration du bootloader"
@@ -530,38 +538,38 @@ bootloader() {
   ROOT_UUID=$(lsblk -n -o UUID $CRYPT_ROOT)
   HOME_UUID=$(lsblk -n -o UUID $CRYPT_HOME)
   sed -i "s/GRUB_CMDLINE_LINUX=\"\"/GRUB_CMDLINE_LINUX=\"cryptdevice=UUID=$CRYPT_UUID:$CRYPT_NAME root=$CRYPT_ROOT\"/" /mnt/etc/default/grub
-  case "$CPU" in
-    i5-2410M)
-      arch-chroot /mnt grub-install --target=i386-pc --no-floppy --recheck "$DRIVE" &>/dev/null
-      ;;
-    i5-1340P)
-      ;;
-    i5-4570S)
-      ;;
-  esac
-  arch-chroot /mnt grub-mkconfig -o /boot/grub/grub.cfg &>/dev/null
-  ok
-  
-  # Configuration du réseau
-  SUBTITLE="Configuration du réseau"
-  echo -n "$SPACE2$SUBTITLE..."
-  echo "$PROFILE" > /mnt/etc/hostname
-  cat <<EOT > "/mnt/etc/hosts"
-127.0.0.1   localhost
-::1         localhost
-127.0.1.1   "$PROFILE".localdomain  "$PROFILE"
-EOT
-  arch-chroot /mnt systemctl enable NetworkManager.service &>/dev/null
-  ok
-
-  # Configuration des comptes d'utilisateur
-  SUBTITLE="Configuration des comptes d'utilisateur"
-  # Réactive le mot de passe pour sudo
-  sed -i "s/# %wheel ALL=(ALL:ALL) ALL/%wheel ALL=(ALL:ALL) ALL/" /mnt/etc/sudoers
-  sed -i "s/%wheel ALL=(ALL:ALL) NOPASSWD: ALL/# %wheel ALL=(ALL:ALL) NOPASSWD: ALL/" /mnt/etc/sudoers
-  # Ajout de l'autologin après la décryption du disque
-  sed -i "s/--noclear/--noclear --autologin ${USER}/" /mnt/etc/sudoers
-  ok
+#  case "$CPU" in
+#    i5-2410M)
+#      arch-chroot /mnt grub-install --target=i386-pc --no-floppy --recheck "$DRIVE" &>/dev/null
+#      ;;
+#    i5-1340P)
+#      ;;
+#    i5-4570S)
+#      ;;
+#  esac
+#  arch-chroot /mnt grub-mkconfig -o /boot/grub/grub.cfg &>/dev/null
+#  ok
+#  
+#  # Configuration du réseau
+#  SUBTITLE="Configuration du réseau"
+#  echo -n "$SPACE2$SUBTITLE..."
+#  echo "$PROFILE" > /mnt/etc/hostname
+#  cat <<EOT > "/mnt/etc/hosts"
+#127.0.0.1   localhost
+#::1         localhost
+#127.0.1.1   "$PROFILE".localdomain  "$PROFILE"
+#EOT
+#  arch-chroot /mnt systemctl enable NetworkManager.service &>/dev/null
+#  ok
+#
+#  # Configuration des comptes d'utilisateur
+#  SUBTITLE="Configuration des comptes d'utilisateur"
+#  # Réactive le mot de passe pour sudo
+#  sed -i "s/# %wheel ALL=(ALL:ALL) ALL/%wheel ALL=(ALL:ALL) ALL/" /mnt/etc/sudoers
+#  sed -i "s/%wheel ALL=(ALL:ALL) NOPASSWD: ALL/# %wheel ALL=(ALL:ALL) NOPASSWD: ALL/" /mnt/etc/sudoers
+#  # Ajout de l'autologin après la décryption du disque
+#  sed -i "s/--noclear/--noclear --autologin ${USER}/" /mnt/etc/sudoers
+#  ok
 }
 
 # Exécution du script
@@ -571,8 +579,8 @@ confirm;
 collect_datas;
 detect_system;
 mount_drives;
-base_install;
-system_configuration;
-common_install;
-software_configuration;
+#base_install;
+#system_configuration;
+#common_install;
+#software_configuration;
 bootloader;
