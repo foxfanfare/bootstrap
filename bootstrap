@@ -596,12 +596,14 @@ bootloader() {
   echo -n "$SPACE2$SUBTITLE..."
   CRYPT_UUID=$(lsblk -n -o UUID $CRYPT_PARTITION | awk 'END{print}')
   ROOT_UUID=$(lsblk -n -o UUID $CRYPT_ROOT)
+  sed -i "s/GRUB_TIMEOUT=5/GRUB_TIMEOUT=0/" /mnt/etc/default/grub
   sed -i "s/GRUB_CMDLINE_LINUX=\"\"/GRUB_CMDLINE_LINUX=\"cryptdevice=UUID=$CRYPT_UUID:$CRYPT_NAME root=UUID=$ROOT_UUID\"/" /mnt/etc/default/grub
   case "$PROFILE" in
     "HP-DV7")
       arch-chroot /mnt grub-install --target=i386-pc --no-floppy --recheck "$DRIVE" &>/dev/null
       ;;
     "SILENCIO-3700X")
+      sed -i "s/\"loglevel=3 quiet\"/\"loglevel=3 quiet amdgpu.dc=0\"/" /mnt/etc/default/grub
       arch-chroot /mnt grub-install --target=x86_64-efi --efi-directory=/boot --bootloader-id=GRUB &>/dev/null
       ;;
   esac
