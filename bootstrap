@@ -349,6 +349,7 @@ partition(){
         echo           # dernier secteur (défaut)
         echo "8e00"    # LVM partition
         echo "w"       # écrire la table sur le disque et quitter
+        echo "y"       # confirmation si demandé
       ) | gdisk "$DRIVE" #&>/dev/null
       BOOT_PARTITION="${DRIVE}1"
       CRYPT_PARTITION="${DRIVE}2"
