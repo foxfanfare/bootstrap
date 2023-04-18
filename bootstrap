@@ -526,7 +526,7 @@ bootloader() {
   CRYPT_UUID=$(lsblk -n -o UUID $CRYPT_PATH/$CRYPT_NAME | awk NR==1)
   ROOT_UUID=$(lsblk -n -o UUID $CRYPT_ROOT)
   HOME_UUID=$(lsblk -n -o UUID $CRYPT_HOME)
-  #sed -i "s/loglevel=3 quiet/loglevel=3 quiet cryptdevice=UUID=$CRYPT_UUID:$CRYPT_NAME root=UUID=$ROOT_UUID home=UUID=$HOME_UUID/" /mnt/etc/default/grub
+  sed -i "s/loglevel=3 quiet/loglevel=3 quiet cryptdevice=UUID=$CRYPT_UUID:$CRYPT_NAME root=UUID=$ROOT_UUID home=UUID=$HOME_UUID/" /mnt/etc/default/grub
   ok
 
   # Installation du bootloader
