@@ -270,12 +270,12 @@ partition(){
       echo -n "$SPACE2$SUBTITLE..."
       DRIVE="/dev/vda"
       (
-        echo "g"       # créer une nouvelle table vide de partitions DOS
+        echo "o"       # créer une nouvelle table vide de partitions DOS
         echo "n"       # ajouter une nouvelle partition
         echo "p"       # partition primaire
         echo "1"       # partition 1
         echo           # premier secteur (défaut)
-        echo "+512M"   # +512Mo
+        echo "+2M"     # +2Mo
         echo "y"       # supprime la signature si demandée
         echo "t"       # choisir le type
         echo "4"       # Bios BOOT
@@ -283,12 +283,18 @@ partition(){
         echo "p"       # partition primaire
         echo "2"       # partition 2
         echo           # premier secteur (défaut)
+        echo "+512M"   # +512Mo
+        echo "y"       # supprime la signature si demandée
+        echo "n"       # ajouter une nouvelle partition
+        echo "p"       # partition primaire
+        echo "3"       # partition 2
+        echo           # premier secteur (défaut)
         echo           # dernier secteur (défaut)
         echo "y"       # supprime la signature si demandée
         echo "w"       # écrire la table sur le disque et quitter
       ) | fdisk "$DRIVE" &>/dev/null
-      BOOT_PARTITION="${DRIVE}1"
-      CRYPT_PARTITION="${DRIVE}2"
+      BOOT_PARTITION="${DRIVE}2"
+      CRYPT_PARTITION="${DRIVE}3"
       CRYPT_NAME="cryptlvm"
       CRYPT_PATH="/dev/mapper"
       CRYPT_ROOT="$CRYPT_PATH/vg0-root"
@@ -529,7 +535,7 @@ bootloader() {
   sed -i "s/loglevel=3 quiet/loglevel=3 quiet cryptdevice=UUID=$CRYPT_UUID:$CRYPT_NAME root=UUID=$ROOT_UUID home=UUID=$HOME_UUID/" /mnt/etc/default/grub
   ok
 
-  # Installation du bootloader
+  # Configuration du bootloader
   SUBTITLE="Configuration du bootloader"
   echo -n "$SPACE2$SUBTITLE..."
   case "$CPU" in
@@ -573,8 +579,8 @@ confirm;
 collect_datas;
 detect_system;
 mount_drives;
-base_install;
-system_configuration;
-common_install;
-software_configuration;
-bootloader;
+#base_install;
+#system_configuration;
+#common_install;
+#software_configuration;
+#bootloader;
