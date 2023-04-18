@@ -630,7 +630,7 @@ EOT
   sed -i "s/%wheel ALL=(ALL:ALL) NOPASSWD: ALL/# %wheel ALL=(ALL:ALL) NOPASSWD: ALL/" /mnt/etc/sudoers
   umount -R /mnt
   ok
-  #reboot
+  reboot
 }
 
 # Exécution du script
