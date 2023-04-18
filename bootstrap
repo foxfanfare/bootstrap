@@ -575,7 +575,7 @@ print_title;
 confirm;
 collect_datas;
 detect_system;
-mount_drives;
+#mount_drives;
 #base_install;
 #system_configuration;
 #common_install;
