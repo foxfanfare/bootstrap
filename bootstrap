@@ -374,7 +374,7 @@ partition(){
       echo -n "$SPACE2$SUBTITLE..."
       pvcreate "$CRYPT_PATH/$CRYPT_NAME" &>/dev/null
       vgcreate vg0 "$CRYPT_PATH/$CRYPT_NAME" &>/dev/null
-      lvcreate -L 6G vg0 -n root &>/dev/null
+      lvcreate -L 100G vg0 -n root &>/dev/null
       lvcreate -l 100%FREE vg0 -n home &>/dev/null
       ok
 
@@ -635,7 +635,7 @@ confirm;
 collect_datas;
 detect_system;
 mount_drives;
-#base_install;
+base_install;
 #system_configuration;
 #common_install;
 #software_configuration;
